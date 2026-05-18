@@ -904,7 +904,7 @@ body::before {
         <div>@cyrene.boutique</div>
         <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(201,176,122,0.1);display:flex;gap:16px;flex-wrap:wrap;">
           <a href="legal.html"   style="color:rgba(201,176,122,0.3);font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(201,176,122,0.3)'">📜 Legal & Policies</a>
-          <a href="invoice.html" style="color:rgba(201,176,122,0.3);font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(201,176,122,0.3)'">🧾 Invoice</a>
+          
           </div>
         <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(201,176,122,0.1);">
           <a href="legal.html" id="legal-link" style="color:rgba(201,176,122,0.35);text-decoration:none;font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;transition:color .3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(201,176,122,0.35)'">Legal &amp; Policies ↗</a>
@@ -963,11 +963,34 @@ body::before {
               <div class="pay-opt-desc">LYD · Recommended</div>
             </div>
           </div>
-          <div class="pay-opt" onclick="selectPayment('cash',this)">
+          <div class="pay-opt" onclick="showCashUnavailable()" style="opacity:0.5;position:relative;">
             <div class="pay-opt-icon">💵</div>
             <div class="pay-opt-info">
               <div class="pay-opt-name">Cash USD</div>
-              <div class="pay-opt-desc">Upon delivery</div>
+              <div class="pay-opt-desc" style="color:var(--crimson);">Currently unavailable</div>
+            </div>
+            <div style="position:absolute;top:8px;right:10px;font-family:'Jost',sans-serif;font-size:9px;letter-spacing:2px;color:var(--crimson);border:0.5px solid rgba(107,15,15,0.3);padding:2px 8px;border-radius:20px;">SOON</div>
+          </div>
+
+          <!-- Cash unavailable popup -->
+          <div id="cash-unavail-popup" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:20px;">
+            <div onclick="event.stopPropagation()" style="background:var(--ivory);max-width:360px;width:100%;border-radius:4px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+              <div style="background:var(--noir);padding:28px;text-align:center;">
+                <div style="font-size:36px;margin-bottom:10px;">💵</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;letter-spacing:2px;">Cash Payment</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:rgba(201,176,122,0.45);margin-top:5px;">Coming Soon</div>
+              </div>
+              <div style="padding:28px;text-align:center;">
+                <p style="font-family:'Jost',sans-serif;font-size:13px;font-weight:200;color:var(--muted);line-height:1.9;margin-bottom:22px;">
+                  Cash USD payment is <strong style="color:var(--noir);">currently unavailable</strong>.<br>
+                  Please use <strong style="color:var(--crimson);">Bank Transfer</strong> to complete your order.<br><br>
+                  Cash payment will be available soon. Thank you for your patience. 🙏
+                </p>
+                <button onclick="document.getElementById('cash-unavail-popup').style.display='none'"
+                  style="background:var(--crimson);color:#fff;border:none;padding:12px 36px;border-radius:2px;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:3px;cursor:pointer;text-transform:uppercase;">
+                  Understood
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1059,17 +1082,7 @@ body::before {
       </button>
     </div>
 
-    <!-- Summary -->
-    <div class="checkout-summary-col">
-      <div class="summary-card">
-        <div class="summary-title">Order Summary</div>
-        <div id="co-summary-items"></div>
-        <div class="sum-total">
-          <span class="sum-total-lbl">Total</span>
-          <span class="sum-total-val" id="co-summary-total">LYD 0</span>
-        </div>
-      </div>
-    </div>
+
   </div>
 </div>
 
@@ -1086,12 +1099,24 @@ body::before {
         Thank you for your order.<br>
         We will contact you within 24 hours to confirm and arrange delivery.
       </p>
+      <!-- Order Receipt -->
+      <div id="success-receipt" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(201,176,122,0.2);border-radius:3px;padding:20px;margin:20px 0;text-align:left;width:100%;max-width:420px;">
+        <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;">Order Receipt</div>
+        <div id="receipt-order-id" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;margin-bottom:4px;"></div>
+        <div id="receipt-date" style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;margin-bottom:14px;"></div>
+        <div id="receipt-items" style="font-family:'Jost',sans-serif;font-size:12px;color:rgba(255,255,255,0.7);line-height:2;border-top:0.5px solid rgba(201,176,122,0.15);padding-top:12px;margin-bottom:12px;"></div>
+        <div style="border-top:0.5px solid rgba(201,176,122,0.25);padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.4);">TOTAL</span>
+          <span id="receipt-total" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);"></span>
+        </div>
+        <div style="margin-top:8px;font-family:'Jost',sans-serif;font-size:10px;color:rgba(255,255,255,0.3);">
+          Bank Transfer · LYD &nbsp;·&nbsp; <span id="receipt-delivery"></span>
+        </div>
+      </div>
+
       <div class="success-actions">
         <a class="wa-btn" id="success-wa-link" href="#" target="_blank">💬 Confirm via WhatsApp</a>
-        <button class="wa-btn" id="success-invoice-btn" onclick="" style="background:rgba(201,176,122,0.15);border:0.5px solid rgba(201,176,122,0.4);color:var(--gold);margin-top:0;">
-          🧾 View My Invoice
-        </button>
-        <button class="continue-shopping" onclick="showPage('store-page');resetCart()">← Continue Shopping</button>
+        <button class="continue-shopping" onclick="showPage('store-page')">← Continue Shopping</button>
       </div>
     </div>
   </div>
@@ -1462,6 +1487,12 @@ body::before {
     <button id="od-invoice-btn" onclick="generateInvoice(currentOrderId)" style="width:100%;background:none;border:0.5px solid rgba(201,176,122,0.3);color:var(--gold);padding:12px;margin-top:8px;border-radius:2px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.background='rgba(201,176,122,0.08)'" onmouseout="this.style.background='none'">
       🧾 View & Print Invoice
     </button>
+    <button onclick="cancelOrder(currentOrderId)" style="width:100%;background:rgba(180,20,20,0.08);border:0.5px solid rgba(180,20,20,0.25);color:#8B1A1A;padding:12px;margin-top:8px;border-radius:2px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;">
+      ✕ Cancel Order
+    </button>
+    <button id="od-invoice-btn" onclick="generateInvoice(currentOrderId)" style="width:100%;background:none;border:0.5px solid rgba(201,176,122,0.3);color:var(--gold);padding:12px;margin-top:8px;border-radius:2px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.background='rgba(201,176,122,0.08)'" onmouseout="this.style.background='none'">
+      🧾 View & Print Invoice
+    </button>
   </div>
 </div>
 
@@ -1687,12 +1718,16 @@ function selectOpt(type, val, btn) {
   document.querySelectorAll(row + ' .opt-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
+let _addingToCart = false;
 function addToCart() {
-  // If product has no sizes/colors defined — add directly
+  if (_addingToCart) return; // prevent double-tap on mobile
+  _addingToCart = true;
+  setTimeout(() => { _addingToCart = false; }, 1000);
+
   const hasSizes  = currentProduct.sizes  && currentProduct.sizes.length  > 0;
   const hasColors = currentProduct.colors && currentProduct.colors.length > 0;
-  if (hasSizes  && !selectedSize)  { alert(currentLang==='ar' ? 'يرجى اختيار المقاس' : 'Please select a size');   return; }
-  if (hasColors && !selectedColor) { alert(currentLang==='ar' ? 'يرجى اختيار اللون'  : 'Please select a colour'); return; }
+  if (hasSizes  && !selectedSize)  { alert(currentLang==='ar' ? 'يرجى اختيار المقاس' : 'Please select a size');   _addingToCart=false; return; }
+  if (hasColors && !selectedColor) { alert(currentLang==='ar' ? 'يرجى اختيار اللون'  : 'Please select a colour'); _addingToCart=false; return; }
   const size  = selectedSize  || (currentProduct.sizes  && currentProduct.sizes[0])  || '—';
   const color = selectedColor || (currentProduct.colors && currentProduct.colors[0]) || '—';
   cart.push({ ...currentProduct, selectedSize: size, selectedColor: color, cartId: Date.now() });
@@ -1705,7 +1740,7 @@ function addToCart() {
 function updateCartUI() {
   const count = cart.length;
   document.getElementById('cart-badge').textContent = count;
-  const _usd = selectedPayment === 'cash';
+  const _usd = false;
   const total = cart.reduce((s,i) => s + (_usd ? (i.priceUSD||0) : (i.priceLYD||i.price||0)), 0);
   document.getElementById('cart-total-val').textContent = _usd ? `$${total.toLocaleString()}` : `LYD ${total.toLocaleString()}`;
   const body = document.getElementById('cart-body');
@@ -1719,7 +1754,7 @@ function updateCartUI() {
       <div class="cart-item-info">
         <div class="cart-item-name">${item.name}</div>
         <div class="cart-item-meta">${item.selectedSize} · ${item.selectedColor}</div>
-        <div class="cart-item-price">${selectedPayment==='cash'?'$'+(item.priceUSD||''):'LYD '+(item.priceLYD||item.price||0).toLocaleString()}</div>
+        <div class="cart-item-price">LYD ${(item.priceLYD||item.price||0).toLocaleString()}</div>
       </div>
       <button class="cart-item-del" onclick="removeFromCart(${item.cartId})">✕</button>
     </div>
@@ -1733,7 +1768,7 @@ function resetCart() { cart = []; updateCartUI(); }
 function goToCheckoutSummary() {
   // Refresh summary if checkout page is active
   if (!document.getElementById('checkout-page').classList.contains('active')) return;
-  const _usd = selectedPayment === 'cash';
+  const _usd = false;
   const items = document.getElementById('co-summary-items');
   if (!items) return;
   items.innerHTML = cart.map(i => `
@@ -1766,10 +1801,10 @@ function goToCheckout() {
         <div class="sum-item-name">${i.name}</div>
         <div class="sum-item-meta">${i.selectedSize} · ${i.selectedColor}</div>
       </div>
-      <div class="sum-item-price">${selectedPayment==='cash'?'$'+(i.priceUSD||''):'LYD '+(i.priceLYD||i.price||0).toLocaleString()}</div>
+      <div class="sum-item-price">${'LYD '+(i.priceLYD||i.price||0).toLocaleString()}</div>
     </div>
   `).join('');
-  const _usd2 = selectedPayment === 'cash';
+  const _usd2 = false;
   const total = cart.reduce((s,i) => s + (_usd2 ? (i.priceUSD||0) : (i.priceLYD||i.price||0)), 0);
   document.getElementById('co-summary-total').textContent = _usd2 ? `$${total.toLocaleString()}` : `LYD ${total.toLocaleString()}`;
   // Reset policies checkbox
@@ -1789,14 +1824,21 @@ function goToCheckout() {
 
 /* ─── PAYMENT ─── */
 function selectPayment(type, el) {
-  // Only bank transfer accepted — always bank
   selectedPayment = 'bank';
   updateCartUI();
   goToCheckoutSummary();
 }
+function showCashUnavailable() {
+  const p = document.getElementById('cash-unavail-popup');
+  if (p) p.style.display = 'flex';
+}
 
 /* ─── SUBMIT ORDER ─── */
+let _submittingOrder = false;
 function submitOrder() {
+  if (_submittingOrder) return;
+  _submittingOrder = true;
+  setTimeout(() => { _submittingOrder = false; }, 3000);
   const name = document.getElementById('co-name').value.trim();
   const phone = document.getElementById('co-phone').value.trim();
   const city = document.getElementById('co-city').value.trim();
@@ -1811,7 +1853,7 @@ function submitOrder() {
     items: cart.map(i => ({ name: i.name, size: i.selectedSize, color: i.selectedColor, priceLYD: i.priceLYD||i.price||0, priceUSD: i.priceUSD||0 })),
     totalLYD: cart.reduce((s,i) => s+(i.priceLYD||i.price||0), 0),
     totalUSD: cart.reduce((s,i) => s+(i.priceUSD||0), 0),
-    total: selectedPayment==='cash' ? cart.reduce((s,i)=>s+(i.priceUSD||0),0) : cart.reduce((s,i)=>s+(i.priceLYD||i.price||0),0),
+    total: cart.reduce((s,i)=>s+(i.priceLYD||i.price||0),0),
     payment: selectedPayment,
     status: 'pending'
   };
@@ -1840,13 +1882,42 @@ function submitOrder() {
   const payLabel = _isUSD ? 'Cash USD' : 'Bank Transfer (LYD)';
   const totalStr = _isUSD ? `$${order.totalUSD||order.total}` : `LYD ${(order.totalLYD||order.total).toLocaleString()}`;
   const waMsg = currentLang === 'ar'
-    ? `✨ *شكراً لك على ثقتك في سيرين™ بوتيك* ✨\n\nعزيزي ${name}،\nتم استلام طلبك بنجاح 🌙\n\n*رقم طلبك:* ${orderId}\n*تاريخ التوصيل المتوقع:* ${deliveryStr}\n\n*تفاصيل طلبك:*\n${itemsList}\n\n*المجموع:* ${totalStr}\n*طريقة الدفع:* ${payLabel}\n\nسيتم التواصل معك قريباً لتأكيد الطلب.\nنتمنى لك تجربة تسوق ملكية مع سيرين™ 👑`
-    : `✨ *Thank you for choosing CYRÈNE™ Boutique* ✨\n\nDear ${name},\nYour order has been received successfully 🌙\n\n*Order Number:* ${orderId}\n*Expected Delivery:* ${deliveryStr}\n\n*Your Order:*\n${itemsList}\n\n*Total:* ${totalStr}\n*Payment:* ${payLabel}\n\nOur team will contact you shortly to confirm.\nWe hope you enjoy your CYRENE™ experience 👑`;
+    ? `مرحباً CYRÈNE Boutique 👋\n\nأنا ${name}، أريد التأكيد على طلبي:\n\n*رقم الطلب:* ${orderId}\n\n*الطلبات:*\n${itemsList}\n\n*المجموع:* ${totalStr}\n*الدفع:* ${payLabel}\n\nهل يمكنكم تأكيد الطلب؟ شكراً 🙏`
+    : `Hello CYRÈNE Boutique 👋\n\nI am ${name} and I would like to confirm my order:\n\n*Order Number:* ${orderId}\n\n*Items:*\n${itemsList}\n\n*Total:* ${totalStr}\n*Payment:* ${payLabel}\n\nCould you please confirm my order? Thank you 🙏`;
 
-  document.getElementById('success-order-id').textContent = `ORDER #${orderId}`;
+  // Fill receipt
+  document.getElementById('success-order-id').textContent = 'ORDER #' + orderId;
+  // Fill receipt
+  const recId = document.getElementById('receipt-order-id');
+  const recDate = document.getElementById('receipt-date');
+  const recItems = document.getElementById('receipt-items');
+  const recTotal = document.getElementById('receipt-total');
+  const recDel = document.getElementById('receipt-delivery');
+  if (recId) recId.textContent = '#' + orderId;
+  if (recDate) recDate.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  if (recItems) recItems.innerHTML = order.items.map(i =>
+    '<div style="display:flex;justify-content:space-between;gap:12px;"><span>' + i.name + ' <span style="opacity:0.5;font-size:10px;">(' + (i.size||'') + ' · ' + (i.color||'') + ')</span></span><span style="color:#C9B07A;">LYD ' + (i.priceLYD||0).toLocaleString() + '</span></div>'
+  ).join('');
+  if (recTotal) recTotal.textContent = 'LYD ' + (order.totalLYD||order.total||0).toLocaleString();
+  if (recDel) { const d=new Date(); d.setDate(d.getDate()+28); recDel.textContent = 'Estimated delivery: ' + d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }
+  document.getElementById('receipt-order-id').textContent = `#${orderId}`;
+  document.getElementById('receipt-date').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('receipt-items').innerHTML = order.items.map(i =>
+    `<div style="display:flex;justify-content:space-between;padding:2px 0;">
+      <span>${i.name} <span style="color:var(--muted);font-size:11px;">(${i.size} · ${i.color})</span></span>
+      <span style="color:var(--crimson);">LYD ${(i.priceLYD||0).toLocaleString()}</span>
+    </div>`
+  ).join('');
+  document.getElementById('receipt-total').textContent = `LYD ${(order.totalLYD||order.total||0).toLocaleString()}`;
+  const del = new Date(); del.setDate(del.getDate()+28);
+  document.getElementById('receipt-delivery').textContent = 'Est. delivery: ' + del.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('success-body').innerHTML = T[currentLang].successMsg(name, orderId);
   document.getElementById('success-wa-link').href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(waMsg)}`;
 
+  // Clear cart after successful order
+  cart = [];
+  updateCartUI();
+  closeCart();
   showPage('success-page');
 }
 
@@ -1956,6 +2027,14 @@ function openOrderDetail(id) {
   document.getElementById('od-modal').classList.add('open');
 }
 function closeOrderDetail() { document.getElementById('od-modal').classList.remove('open'); currentOrderId = null; }
+function cancelOrder(id) {
+  if (!confirm('Are you sure you want to cancel this order?')) return;
+  const ords = getOrders();
+  const o = ords.find(x => x.id === id);
+  if (o) { o.status = 'cancelled'; setOrders(ords); }
+  renderOrders(); renderDash(); closeOrderDetail();
+}
+
 function updateStatus() {
   if (!currentOrderId) return;
   const orders = getOrders();
@@ -2917,12 +2996,198 @@ td:nth-child(2),td:nth-child(3){text-align:center;}
   </div>
 
 </div>
+
+<!-- ═══════════════════ CUSTOM ORDER PAGE ═══════════════════ -->
+<div id="custom-order-page" class="page" style="display:none;min-height:100vh;background:var(--ivory);padding:80px 20px 60px;">
+  <div style="max-width:600px;margin:0 auto;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:5px;color:var(--gold);margin-bottom:12px;">SPECIAL REQUEST</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--text);letter-spacing:3px;line-height:1.2;">Custom Order</h1>
+      <div style="width:60px;height:0.5px;background:linear-gradient(to right,transparent,var(--gold),transparent);margin:16px auto;"></div>
+      <p style="font-family:'Jost',sans-serif;font-size:13px;font-weight:200;color:var(--muted);line-height:1.9;">
+        Have a specific product in mind? Upload a photo and tell us what you want.<br>We'll get back to you on WhatsApp.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <!-- Photo upload -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Product Photo *</label>
+        <div id="co-img-zone" onclick="document.getElementById('co-img-file').click()"
+          style="border:1.5px dashed rgba(107,15,15,0.2);border-radius:3px;padding:32px;text-align:center;cursor:pointer;transition:all .3s;background:rgba(253,246,236,0.5);"
+          onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='rgba(107,15,15,0.2)'">
+          <div id="co-img-preview" style="margin-bottom:8px;font-size:32px;">📸</div>
+          <div style="font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);" id="co-img-label">Upload a photo of the product you want</div>
+          <div style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(138,106,106,0.5);margin-top:4px;">JPG, PNG — tap to select</div>
+        </div>
+        <input type="file" id="co-img-file" accept="image/*" style="display:none" onchange="previewCustomImg(event)"/>
+      </div>
+
+      <!-- Product description -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Product Description *</label>
+        <textarea id="co-product-desc" rows="3" placeholder="Describe the product — type, style, brand if known..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"></textarea>
+      </div>
+
+      <!-- Color -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Preferred Color</label>
+        <input type="text" id="co-color" placeholder="e.g. Black, Burgundy, Ivory..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+      </div>
+
+      <!-- Size -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Size / Measurements</label>
+        <input type="text" id="co-size" placeholder="e.g. M, 42, or specific measurements..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+      </div>
+
+      <!-- Budget -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Budget (optional)</label>
+        <input type="text" id="co-budget" placeholder="e.g. LYD 500–1000"
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+      </div>
+
+      <!-- Name + Phone -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Your Name *</label>
+          <input type="text" id="co-cust-name" placeholder="Full name"
+            style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+        </div>
+        <div>
+          <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">WhatsApp *</label>
+          <input type="tel" id="co-cust-phone" placeholder="+218..."
+            style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Additional Notes</label>
+        <textarea id="co-notes-custom" rows="2" placeholder="Any other details about your request..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button onclick="submitCustomOrder()"
+        style="width:100%;background:var(--crimson);color:#fff;border:none;padding:18px;border-radius:3px;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;"
+        onmouseover="this.style.background='#8B1A1A'" onmouseout="this.style.background='var(--crimson)'">
+        💬 Send Request via WhatsApp
+      </button>
+
+      <button onclick="showPage('store-page')"
+        style="width:100%;background:none;border:0.5px solid rgba(107,15,15,0.2);color:var(--muted);padding:14px;border-radius:3px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;"
+        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(107,15,15,0.2)';this.style.color='var(--muted)'">
+        ← Back to Store
+      </button>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>`;
 
   const win = window.open('', '_blank');
   win.document.write(html);
   win.document.close();
+}
+
+
+/* ─── CUSTOM ORDER ─── */
+let customImgFile = null;
+
+function previewCustomImg(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  customImgFile = file;
+  const url = URL.createObjectURL(file);
+  const preview = document.getElementById('co-img-preview');
+  preview.innerHTML = `<img src="${url}" style="max-height:120px;max-width:100%;border-radius:4px;object-fit:contain;" />`;
+  document.getElementById('co-img-label').textContent = file.name;
+}
+
+async function submitCustomOrder() {
+  const name  = document.getElementById('co-cust-name').value.trim();
+  const phone = document.getElementById('co-cust-phone').value.trim();
+  const desc  = document.getElementById('co-product-desc').value.trim();
+  if (!name)  { alert('Please enter your name'); return; }
+  if (!phone) { alert('Please enter your WhatsApp number'); return; }
+  if (!desc)  { alert('Please describe the product you want'); return; }
+
+  const color  = document.getElementById('co-color').value.trim()  || 'Not specified';
+  const size   = document.getElementById('co-size').value.trim()   || 'Not specified';
+  const budget = document.getElementById('co-budget').value.trim() || 'Not specified';
+  const notes  = document.getElementById('co-notes-custom').value.trim();
+
+  let imgLine = '';
+
+  // If image was uploaded — try to upload to imgbb for sharing
+  if (customImgFile) {
+    try {
+      const b64 = await new Promise((res,rej) => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result.split(',')[1]);
+        r.onerror = rej;
+        r.readAsDataURL(customImgFile);
+      });
+      const fd = new FormData();
+      fd.append('key', '5cd3d8ff0f0cb2b6f91b0dab0d12ddd6');
+      fd.append('image', b64);
+      const resp = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body:fd });
+      const data = await resp.json();
+      if (data.success) {
+        imgLine = `\n📸 Product Photo: ${data.data.url}`;
+      }
+    } catch(e) {
+      imgLine = '\n📸 (Photo attached separately)';
+    }
+  }
+
+  const waMsg =
+`👋 Hello CYRÈNE Boutique,
+
+My name is *${name}* and I have a custom order request:
+
+*Product Description:*
+${desc}
+
+*Color:* ${color}
+*Size:* ${size}
+*Budget:* ${budget}${notes ? `\n*Notes:* ${notes}` : ''}${imgLine}
+
+*My WhatsApp:* ${phone}
+
+Please let me know if you can help. Thank you! 🙏`;
+
+  window.open(`https://wa.me/${WA_NUM}?text=${encodeURIComponent(waMsg)}`, '_blank');
+
+  // Reset form
+  document.getElementById('co-product-desc').value = '';
+  document.getElementById('co-color').value = '';
+  document.getElementById('co-size').value = '';
+  document.getElementById('co-budget').value = '';
+  document.getElementById('co-cust-name').value = '';
+  document.getElementById('co-cust-phone').value = '';
+  document.getElementById('co-notes-custom').value = '';
+  document.getElementById('co-img-preview').innerHTML = '📸';
+  document.getElementById('co-img-label').textContent = 'Upload a photo of the product you want';
+  customImgFile = null;
 }
 
 /* ─── SCROLL TO SECTION ─── */
@@ -2959,5 +3224,109 @@ setTimeout(() => {
   }
 }, 500);
 </script>
+
+<!-- ═══════════════════ CUSTOM ORDER PAGE ═══════════════════ -->
+<div id="custom-order-page" class="page" style="display:none;min-height:100vh;background:var(--ivory);padding:80px 20px 60px;">
+  <div style="max-width:600px;margin:0 auto;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:5px;color:var(--gold);margin-bottom:12px;">SPECIAL REQUEST</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--text);letter-spacing:3px;line-height:1.2;">Custom Order</h1>
+      <div style="width:60px;height:0.5px;background:linear-gradient(to right,transparent,var(--gold),transparent);margin:16px auto;"></div>
+      <p style="font-family:'Jost',sans-serif;font-size:13px;font-weight:200;color:var(--muted);line-height:1.9;">
+        Have a specific product in mind? Upload a photo and tell us what you want.<br>We'll get back to you on WhatsApp.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <!-- Photo upload -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Product Photo *</label>
+        <div id="co-img-zone" onclick="document.getElementById('co-img-file').click()"
+          style="border:1.5px dashed rgba(107,15,15,0.2);border-radius:3px;padding:32px;text-align:center;cursor:pointer;transition:all .3s;background:rgba(253,246,236,0.5);"
+          onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='rgba(107,15,15,0.2)'">
+          <div id="co-img-preview" style="margin-bottom:8px;font-size:32px;">📸</div>
+          <div style="font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);" id="co-img-label">Upload a photo of the product you want</div>
+          <div style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(138,106,106,0.5);margin-top:4px;">JPG, PNG — tap to select</div>
+        </div>
+        <input type="file" id="co-img-file" accept="image/*" style="display:none" onchange="previewCustomImg(event)"/>
+      </div>
+
+      <!-- Product description -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Product Description *</label>
+        <textarea id="co-product-desc" rows="3" placeholder="Describe the product — type, style, brand if known..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"></textarea>
+      </div>
+
+      <!-- Color -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Preferred Color</label>
+        <input type="text" id="co-color" placeholder="e.g. Black, Burgundy, Ivory..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+      </div>
+
+      <!-- Size -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Size / Measurements</label>
+        <input type="text" id="co-size" placeholder="e.g. M, 42, or specific measurements..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+      </div>
+
+      <!-- Budget -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Budget (optional)</label>
+        <input type="text" id="co-budget" placeholder="e.g. LYD 500–1000"
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+      </div>
+
+      <!-- Name + Phone -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Your Name *</label>
+          <input type="text" id="co-cust-name" placeholder="Full name"
+            style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+        </div>
+        <div>
+          <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">WhatsApp *</label>
+          <input type="tel" id="co-cust-phone" placeholder="+218..."
+            style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border .2s;"
+            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"/>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <label style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px;">Additional Notes</label>
+        <textarea id="co-notes-custom" rows="2" placeholder="Any other details about your request..."
+          style="width:100%;background:white;border:0.5px solid rgba(107,15,15,0.15);border-radius:3px;padding:14px;font-family:'Jost',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border .2s;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(107,15,15,0.15)'"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button onclick="submitCustomOrder()"
+        style="width:100%;background:var(--crimson);color:#fff;border:none;padding:18px;border-radius:3px;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;"
+        onmouseover="this.style.background='#8B1A1A'" onmouseout="this.style.background='var(--crimson)'">
+        💬 Send Request via WhatsApp
+      </button>
+
+      <button onclick="showPage('store-page')"
+        style="width:100%;background:none;border:0.5px solid rgba(107,15,15,0.2);color:var(--muted);padding:14px;border-radius:3px;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;"
+        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(107,15,15,0.2)';this.style.color='var(--muted)'">
+        ← Back to Store
+      </button>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
