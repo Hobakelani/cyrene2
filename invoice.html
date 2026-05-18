@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYRÈNE™ — Invoice</title>
+<title>LUNÈRE™ — Invoice</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════
@@ -375,7 +375,7 @@ body{
   <div class="invoice-outer"></div>
 
   <!-- Watermark -->
-  <div class="watermark">CYRÈNE</div>
+  <div class="watermark">LUNÈRE</div>
 
   <!-- ── HEADER ── -->
   <div class="inv-header">
@@ -391,7 +391,7 @@ body{
           </svg>
         </div>
         <div class="brand-text">
-          <div class="brand-name">CYRÈNE<sup>™</sup></div>
+          <div class="brand-name">LUNÈRE<sup>™</sup></div>
           <div class="brand-tag">The Refined Elite</div>
         </div>
       </div>
@@ -399,7 +399,7 @@ body{
       <!-- Invoice number -->
       <div class="inv-label-block">
         <div class="inv-label">Invoice</div>
-        <div class="inv-number" id="inv-num">#CY-20250001</div>
+        <div class="inv-number" id="inv-num">#LU-20250001</div>
         <div class="inv-date" id="inv-date">May 18, 2025</div>
       </div>
 
@@ -549,7 +549,7 @@ body{
       <div class="footer-rule-line"></div>
     </div>
     <div class="thank-you">
-      Thank you for choosing <strong>CYRÈNE</strong>.
+      Thank you for choosing <strong>LUNÈRE</strong>.
     </div>
     <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:rgba(201,176,122,0.35);letter-spacing:3px;margin-top:4px;position:relative;">
       Every piece. Curated for you.
@@ -557,8 +557,8 @@ body{
     <div class="footer-info">
       <span>Al-Siyahiya, Tripoli, Libya</span>
       <span>++86 197 3031 7977</span>
-      <span>Cyreneboutique.ly@gmail.com</span>
-      <span>@cyrene.boutique</span>
+      <span>Lunereboutique.ly@gmail.com</span>
+      <span>@lunere.boutique</span>
     </div>
   </div>
 
@@ -576,7 +576,7 @@ const del = new Date(now); del.setDate(del.getDate() + 28);
 document.getElementById('delivery-date').value = del.toLocaleDateString('en-GB', opts);
 
 // Invoice number
-const invNum = 'CY-' + now.getFullYear().toString().slice(2) + String(now.getMonth()+1).padStart(2,'0') + String(Math.floor(Math.random()*9000)+1000);
+const invNum = 'LU-' + now.getFullYear().toString().slice(2) + String(now.getMonth()+1).padStart(2,'0') + String(Math.floor(Math.random()*9000)+1000);
 document.getElementById('inv-num').textContent = '#' + invNum;
 
 /* ── Status toggles ── */

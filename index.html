@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>CYRÈNE™ — The Refined Elite</title>
+<title>LUNÈRE™ — The Refined Elite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
@@ -735,6 +735,185 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
   .product-card-action { opacity: 0.92 !important; transform: translate(-50%, -50%) !important; }
   .product-card-overlay { opacity: 0.7 !important; }
 }
+
+/* ── HERO VIDEO ── */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  z-index: 0;
+}
+.hero-video.loaded { opacity: 1; }
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(8,2,2,0.35) 0%,
+    rgba(8,2,2,0.15) 40%,
+    rgba(8,2,2,0.5)  100%
+  );
+  z-index: 1;
+}
+.hero-bg { z-index: 2; }
+.hero-ornament-bg { z-index: 2; }
+.hero-content { z-index: 3; position: relative; }
+
+/* ── VIDEO SECTION ── */
+.video-section {
+  background: var(--noir);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.video-section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+.video-section-label {
+  font-family: 'Jost', sans-serif;
+  font-size: 9px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.video-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 300;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 3px;
+  margin-bottom: 48px;
+  line-height: 1.2;
+}
+.video-player-wrap {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+}
+.video-player-wrap video {
+  width: 100%;
+  display: block;
+  max-height: 80vh;
+  object-fit: contain;
+  background: #000;
+}
+/* Custom controls bar */
+.vid-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  background: linear-gradient(to top, rgba(8,2,2,0.9), transparent);
+  padding: 32px 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.video-player-wrap:hover .vid-controls { opacity: 1; }
+.vid-play-btn {
+  width: 40px; height: 40px;
+  background: none;
+  border: 1px solid rgba(201,176,122,0.5);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.vid-play-btn:hover { background: rgba(201,176,122,0.15); border-color: var(--gold); }
+.vid-progress {
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+.vid-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+.vid-time {
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.vid-mute-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.3s;
+}
+.vid-mute-btn:hover { color: var(--gold); }
+.vid-fs-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.3s;
+}
+.vid-fs-btn:hover { color: var(--gold); }
+
+/* Upload zone */
+.video-upload-zone {
+  border: 1px dashed rgba(201,176,122,0.25);
+  border-radius: 3px;
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(201,176,122,0.03);
+}
+.video-upload-zone:hover {
+  border-color: var(--gold);
+  background: rgba(201,176,122,0.06);
+}
+.video-upload-icon { font-size: 48px; margin-bottom: 16px; }
+.video-upload-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.video-upload-sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 1px;
+  line-height: 1.8;
+}
+@media (max-width: 600px) {
+  .video-section-inner { padding: 60px 20px; }
+}
+
 </style>
 </head>
 <body>
@@ -747,13 +926,13 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
      NAVIGATION
 ════════════════════════════════════════════════════════════ -->
 <nav class="nav dark" id="main-nav">
-  <div class="nav-brand">
+  <div class="nav-brand" ontouchstart="handleLogoTap()" onclick="handleLogoTap()">
     <svg width="30" height="30" viewBox="-14 -14 28 28">
       <path d="M -12,-12 L 12,-12 L 12,12 L -12,12 L -12,-9.5 L 9.5,-9.5 L 9.5,9.5 L -9.5,9.5 L -9.5,-7 L 7,-7 L 7,7 L -7,7 L -7,-4 L 4,-4 L 4,4 L -4,4 L -4,-1.5 L 1.5,-1.5 L 1.5,1.5 L -1.5,1.5 L -1.5,-1.5"
         fill="none" stroke="#C9B07A" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"/>
       <circle cx="0" cy="0" r="0.7" fill="#C9B07A"/>
     </svg>
-    <span class="nav-wordmark">CYRÈNE<sup>™</sup></span>
+    <span class="nav-wordmark">LUNÈRE<sup>™</sup></span>
   </div>
   <ul class="nav-links">
     <li><a href="#" onclick="scrollToSection('.marquee-strip');return false;">New Collection</a></li>
@@ -778,6 +957,12 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
 
   <!-- HERO -->
   <section class="hero">
+    <!-- Hero background video (hidden until uploaded) -->
+    <video id="hero-video" class="hero-video" autoplay muted playsinline
+      style="display:none;"
+      onended="this.pause(); this.currentTime=this.duration-0.01;">
+    </video>
+    <div class="hero-video-overlay" id="hero-video-overlay" style="display:none;"></div>
     <div class="hero-bg"></div>
     <!-- Subtle meander watermark -->
     <div class="hero-ornament-bg">
@@ -818,6 +1003,74 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
       <span>Scroll</span>
     </div>
   </section>
+  <!-- ══
+  <!-- ════════════ VIDEO SHOWCASE SECTION ════════════ -->
+  <section id="video-section" style="display:none;background:#000;position:relative;">
+    <video id="showcase-video"
+      style="width:100%;display:block;max-height:90vh;object-fit:cover;"
+      controls playsinline preload="metadata">
+    </video>
+    <!-- Luxury overlay when no video -->
+    <div id="video-placeholder" style="
+      width:100%;height:60vh;
+      background:linear-gradient(135deg,#080202 0%,#1A0808 50%,#080202 100%);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+      <svg width="50" height="50" viewBox="-14 -14 28 28" opacity="0.3">
+        <path d="M -12,-12 L 12,-12 L 12,12 L -12,12 L -12,-9.5 L 9.5,-9.5 L 9.5,9.5 L -9.5,9.5 L -9.5,-7 L 7,-7 L 7,7 L -7,7 L -7,-4 L 4,-4 L 4,4 L -4,4 L -4,-1.5 L 1.5,-1.5 L 1.5,1.5 L -1.5,1.5 L -1.5,-1.5"
+          fill="none" stroke="#C9B07A" stroke-width="1.4" stroke-linecap="square"/>
+      </svg>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.2);letter-spacing:6px;">LUNÈRE™</div>
+      <div style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.12);text-transform:uppercase;">Video Collection</div>
+    </div>
+  </section>
+  <!-- ═══════════════════════════════════════════════ -->
+
+═════════════════════════════════════════
+       VIDEO SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="video-section" id="video-section" style="display:none;">
+    <div class="video-section-inner">
+      <div class="video-section-label">LUNÈRE™ BOUTIQUE</div>
+      <h2 class="video-section-title" id="vid-section-title">The LUNÈRE Experience</h2>
+      <!-- Video player -->
+      <div class="video-player-wrap" id="vid-player-wrap">
+        <video id="main-video" playsinline
+          style="width:100%;display:block;max-height:80vh;object-fit:contain;background:#000;">
+        </video>
+        <!-- Custom controls -->
+        <div class="vid-controls" id="vid-controls">
+          <button class="vid-play-btn" id="vid-play-btn" onclick="togglePlay()">▶</button>
+          <div class="vid-progress" id="vid-progress" onclick="seekVideo(event)">
+            <div class="vid-progress-fill" id="vid-progress-fill"></div>
+          </div>
+          <span class="vid-time" id="vid-time">0:00 / 0:00</span>
+          <button class="vid-mute-btn" onclick="toggleMute()" id="vid-mute-btn">🔊</button>
+          <button class="vid-fs-btn" onclick="toggleFullscreen()">⛶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       VIDEO UPLOAD PLACEHOLDER (shows when no video)
+  ═══════════════════════════════════════════ -->
+  <section class="video-section" id="video-upload-placeholder" style="display:none;">
+    <div class="video-section-inner">
+      <div class="video-section-label">BRAND VIDEO</div>
+      <h2 class="video-section-title">The LUNÈRE Experience</h2>
+      <div class="video-upload-zone" onclick="document.getElementById('vid-file-input').click()">
+        <div class="video-upload-icon">🎬</div>
+        <div class="video-upload-title">Add Your Brand Video</div>
+        <div class="video-upload-sub">
+          Upload from your device · MP4, MOV, WebM supported<br>
+          Full length · Full quality · No compression
+        </div>
+      </div>
+      <input type="file" id="vid-file-input" accept="video/*" style="display:none"
+        onchange="loadVideo(event)"/>
+    </div>
+  </section>
+
 
   <!-- MARQUEE -->
   <div class="marquee-strip">
@@ -877,17 +1130,17 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
         <a class="channel-card" href="https://wa.me/8619730317977" target="_blank">
           <div class="channel-icon">💬</div>
           <div class="channel-name">WhatsApp</div>
-          <div class="channel-handle">@cyrene.boutique</div>
+          <div class="channel-handle">@lunere.boutique</div>
         </a>
-        <a class="channel-card" href="https://instagram.com/cyrene.boutique" target="_blank">
+        <a class="channel-card" href="https://instagram.com/lunere.boutique" target="_blank">
           <div class="channel-icon">📸</div>
           <div class="channel-name">Instagram</div>
-          <div class="channel-handle">@cyrene.boutique</div>
+          <div class="channel-handle">@lunere.boutique</div>
         </a>
-        <a class="channel-card" href="mailto:Cyreneboutique.ly@gmail.com">
+        <a class="channel-card" href="mailto:Lunereboutique.ly@gmail.com">
           <div class="channel-icon">✉️</div>
           <div class="channel-name">Email</div>
-          <div class="channel-handle">Cyreneboutique.ly@gmail.com</div>
+          <div class="channel-handle">Lunereboutique.ly@gmail.com</div>
         </a>
       </div>
     </div>
@@ -902,20 +1155,23 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
             fill="none" stroke="#C9B07A" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter"/>
           <circle cx="0" cy="0" r="0.7" fill="#C9B07A"/>
         </svg>
-        <span class="footer-wordmark">CYRÈNE<sup>™</sup></span>
+        <span class="footer-wordmark">LUNÈRE<sup>™</sup></span>
       </div>
-      <span class="footer-tagline">The Refined Elite · Cyrène™</span>
+      <span class="footer-tagline">The Refined Elite · Lunère™</span>
       <div class="footer-info">
         <div>Al-Siyahiya, Tripoli, Libya — Est. 2025</div>
-        <div>Cyreneboutique.ly@gmail.com</div>
-        <div>@cyrene.boutique</div>
+        <div>Lunereboutique.ly@gmail.com</div>
+        <div>@lunere.boutique</div>
         
         <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(201,176,122,0.1);">
           <a href="legal.html" id="legal-link" style="color:rgba(201,176,122,0.35);text-decoration:none;font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;transition:color .3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(201,176,122,0.35)'">Legal &amp; Policies ↗</a>
         </div>
       </div>
     </div>
-  </footer>
+    <div style="text-align:center;padding:8px 0 4px;opacity:0.15;">
+    <span onclick="handleLogoTap()" style="font-size:18px;letter-spacing:4px;cursor:pointer;color:rgba(201,176,122,0.4);user-select:none;" title="">···</span>
+  </div>
+</footer>
 
 </div><!-- /store-page -->
 
@@ -1067,7 +1323,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
               <span style="font-size:18px;flex-shrink:0;">✨</span>
               <div>
                 <div style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--text);margin-bottom:2px;" id="pol-4-title">Premium packaging included</div>
-                <div style="font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);font-weight:200;line-height:1.7;" id="pol-4-desc">Every order arrives in luxury Cyrene™ packaging — gift box, tissue paper, scented sachet.</div>
+                <div style="font-family:'Jost',sans-serif;font-size:12px;color:var(--muted);font-weight:200;line-height:1.7;" id="pol-4-desc">Every order arrives in luxury Lunère™ packaging — gift box, tissue paper, scented sachet.</div>
               </div>
             </div>
           </div>
@@ -1097,7 +1353,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
   <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--noir);padding:40px 20px;overflow:hidden;">
     <div class="success-box">
       <div class="success-ornament">✦</div>
-      <div class="success-id" id="success-order-id">ORDER #CY-000000</div>
+      <div class="success-id" id="success-order-id">ORDER #LU-000000</div>
       <p class="success-msg" id="success-body">
         Thank you for your order.<br>
         We will contact you within 24 hours to confirm and arrange delivery.
@@ -1186,7 +1442,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
       <circle cx="0" cy="0" r="0.7" fill="#C9B07A"/>
     </svg>
     <div class="al-title">Admin Access</div>
-    <div class="al-sub">CYRÈNE™ · The Refined Elite</div>
+    <div class="al-sub">LUNÈRE™ · The Refined Elite</div>
     <input type="password" class="al-input" id="al-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
     <button class="al-btn" onclick="doAdminLogin()">ENTER</button>
     <div class="al-err" id="al-err">Incorrect password</div>
@@ -1207,7 +1463,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
           fill="none" stroke="#C9B07A" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter"/>
         <circle cx="0" cy="0" r="0.7" fill="#C9B07A"/>
       </svg>
-      <div class="ad-logo-word">CYRÈNE™</div>
+      <div class="ad-logo-word">LUNÈRE™</div>
       <div class="ad-logo-sub">Dashboard</div>
     </div>
     <nav class="ad-nav">
@@ -1235,14 +1491,14 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
   <main class="admin-main">
     <!-- Mobile top bar -->
     <div style="background:var(--noir2);border-bottom:0.5px solid rgba(201,176,122,0.1);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-family:Cormorant Garamond,Georgia,serif;font-size:16px;letter-spacing:4px;color:#fff;">CYRENE™ <span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;color:rgba(201,176,122,0.4)">ADMIN</span></span>
+      <span style="font-family:Cormorant Garamond,Georgia,serif;font-size:16px;letter-spacing:4px;color:#fff;">LUNERE™ <span style="font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;color:rgba(201,176,122,0.4)">ADMIN</span></span>
       <button onclick="exitAdmin()" style="background:none;border:0.5px solid rgba(201,176,122,0.25);color:var(--gold);padding:8px 18px;border-radius:2px;font-family:Jost,sans-serif;font-size:10px;letter-spacing:3px;cursor:pointer;transition:all 0.25s;" onmouseover="this.style.background='rgba(201,176,122,0.08)'" onmouseout="this.style.background='none'">← EXIT TO STORE</button>
     </div>
 
     <!-- Overview -->
     <div class="ad-panel active" id="panel-dash">
       <div class="ad-panel-title">Overview</div>
-      <div class="ad-panel-sub">Cyrene™ Boutique · Real-time dashboard</div>
+      <div class="ad-panel-sub">Lunère™ Boutique · Real-time dashboard</div>
       <div class="ad-stats">
         <div class="ad-stat">
           <div class="ad-stat-lbl">New Orders</div>
@@ -1465,6 +1721,74 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
     </div>
 
   </main>
+
+  <!-- ══════ PANEL: VIDEOS ══════ -->
+  <div class="ad-panel" id="panel-video" style="display:none;">
+    <div style="padding:32px 36px;">
+
+      <div style="margin-bottom:28px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#fff;letter-spacing:2px;margin-bottom:6px;">Videos</div>
+        <div style="font-family:'Jost',sans-serif;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:2px;">Upload videos for hero background and showcase section</div>
+      </div>
+
+      <!-- Hero Background Video -->
+      <div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(201,176,122,0.15);border-radius:4px;padding:24px;margin-bottom:20px;">
+        <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Hero Background Video</div>
+        <div style="font-family:'Jost',sans-serif;font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:16px;line-height:1.7;">
+          Plays silently behind the LUNÈRE logo on the main page.<br>
+          Plays at full duration then holds on last frame.
+        </div>
+        <div id="hero-vid-preview" style="margin-bottom:12px;display:none;">
+          <video id="hero-vid-preview-player" style="width:100%;max-height:200px;object-fit:cover;border-radius:3px;" controls></video>
+          <button onclick="removeHeroVideo()" style="margin-top:8px;background:rgba(180,20,20,0.1);border:0.5px solid rgba(180,20,20,0.3);color:#8B1A1A;padding:6px 16px;border-radius:2px;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:2px;cursor:pointer;width:100%;">✕ Remove Hero Video</button>
+        </div>
+        <label style="display:block;background:rgba(201,176,122,0.07);border:1.5px dashed rgba(201,176,122,0.25);border-radius:3px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;"
+          onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='rgba(201,176,122,0.25)'"
+          for="hero-vid-file">
+          <div style="font-size:24px;margin-bottom:8px;">🎬</div>
+          <div style="font-family:'Jost',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);" id="hero-vid-label">Click to upload hero background video</div>
+          <div style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(201,176,122,0.3);margin-top:4px;">MP4, MOV, WebM · Any duration · Muted autoplay</div>
+        </label>
+        <input type="file" id="hero-vid-file" accept="video/*" style="display:none" onchange="uploadHeroVideo(event)"/>
+        <div id="hero-vid-progress" style="display:none;margin-top:10px;">
+          <div style="background:rgba(201,176,122,0.1);border-radius:2px;height:3px;overflow:hidden;">
+            <div id="hero-vid-bar" style="height:100%;background:var(--gold);width:0%;transition:width .3s;"></div>
+          </div>
+          <div id="hero-vid-status" style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(201,176,122,0.5);margin-top:6px;text-align:center;">Loading video...</div>
+        </div>
+      </div>
+
+      <!-- Showcase Video -->
+      <div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(201,176,122,0.15);border-radius:4px;padding:24px;">
+        <div style="font-family:'Jost',sans-serif;font-size:9px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Showcase Video</div>
+        <div style="font-family:'Jost',sans-serif;font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:16px;line-height:1.7;">
+          Full video section below the hero — customers can play, pause, watch with sound.<br>
+          Shows at full original length.
+        </div>
+        <div id="showcase-vid-preview" style="margin-bottom:12px;display:none;">
+          <video id="showcase-vid-preview-player" style="width:100%;max-height:200px;object-fit:cover;border-radius:3px;" controls></video>
+          <button onclick="removeShowcaseVideo()" style="margin-top:8px;background:rgba(180,20,20,0.1);border:0.5px solid rgba(180,20,20,0.3);color:#8B1A1A;padding:6px 16px;border-radius:2px;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:2px;cursor:pointer;width:100%;">✕ Remove Showcase Video</button>
+        </div>
+        <label style="display:block;background:rgba(201,176,122,0.07);border:1.5px dashed rgba(201,176,122,0.25);border-radius:3px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;"
+          onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='rgba(201,176,122,0.25)'"
+          for="showcase-vid-file">
+          <div style="font-size:24px;margin-bottom:8px;">🎥</div>
+          <div style="font-family:'Jost',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);" id="showcase-vid-label">Click to upload showcase video</div>
+          <div style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(201,176,122,0.3);margin-top:4px;">MP4, MOV, WebM · Plays with sound · Full duration</div>
+        </label>
+        <input type="file" id="showcase-vid-file" accept="video/*" style="display:none" onchange="uploadShowcaseVideo(event)"/>
+        <div id="showcase-vid-progress" style="display:none;margin-top:10px;">
+          <div style="background:rgba(201,176,122,0.1);border-radius:2px;height:3px;overflow:hidden;">
+            <div id="showcase-vid-bar" style="height:100%;background:var(--gold);width:0%;transition:width .3s;"></div>
+          </div>
+          <div id="showcase-vid-status" style="font-family:'Jost',sans-serif;font-size:10px;color:rgba(201,176,122,0.5);margin-top:6px;text-align:center;">Loading video...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- /panel-video -->
+
 </div><!-- /admin-page -->
 
 <!-- Order Detail Modal -->
@@ -1504,7 +1828,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
 ════════════════════════════════════════════════════════════ -->
 <script>
 /* ─── CONFIG ─── */
-const ADMIN_PASS = 'cyrene2025';
+const ADMIN_PASS = 'lunere2025';
 const WA_NUM = '8619730317977';
 
 /* ─── STORAGE ─── */
@@ -1513,7 +1837,7 @@ let _imgDB = null;
 function openImgDB() {
   return new Promise((res, rej) => {
     if (_imgDB) { res(_imgDB); return; }
-    const req = indexedDB.open('cyrene_images', 1);
+    const req = indexedDB.open('lunere_images', 1);
     req.onupgradeneeded = e => e.target.result.createObjectStore('imgs', { keyPath: 'id' });
     req.onsuccess = e => { _imgDB = e.target.result; res(_imgDB); };
     req.onerror = () => rej(req.error);
@@ -1545,10 +1869,10 @@ async function deleteImgFromDB(id) {
 }
 
 /* ── PRODUCT & ORDER STORAGE ── */
-const getProducts = () => { try { return JSON.parse(localStorage.getItem('cy_products')) || SEED_PRODUCTS; } catch(e) { return SEED_PRODUCTS; } };
-const setProducts = p => { try { localStorage.setItem('cy_products', JSON.stringify(p)); } catch(e) { console.warn('Storage full, clearing old data'); localStorage.removeItem('cy_products'); localStorage.setItem('cy_products', JSON.stringify(p)); } };
-const getOrders = () => { try { return JSON.parse(localStorage.getItem('cy_orders')) || []; } catch(e) { return []; } };
-const setOrders = o => { try { localStorage.setItem('cy_orders', JSON.stringify(o)); } catch(e) { console.warn('Orders storage error', e); } };
+const getProducts = () => { try { return JSON.parse(localStorage.getItem('lu_products')) || SEED_PRODUCTS; } catch(e) { return SEED_PRODUCTS; } };
+const setProducts = p => { try { localStorage.setItem('lu_products', JSON.stringify(p)); } catch(e) { console.warn('Storage full, clearing old data'); localStorage.removeItem('lu_products'); localStorage.setItem('lu_products', JSON.stringify(p)); } };
+const getOrders = () => { try { return JSON.parse(localStorage.getItem('lu_orders')) || []; } catch(e) { return []; } };
+const setOrders = o => { try { localStorage.setItem('lu_orders', JSON.stringify(o)); } catch(e) { console.warn('Orders storage error', e); } };
 
 const SEED_PRODUCTS = [
   { id:1, name:'Italian Leather Tote', cat:'Bags', desc:'Crafted from full-grain Italian leather. Structured silhouette, gold hardware. A statement of understated power.', priceLYD:1800, priceUSD:210, badge:'New', sizes:['S','M','L'], colors:['Noir','Camel','Ivory'], avail:'available', img:'', imgs:[] },
@@ -1584,7 +1908,7 @@ if (window.matchMedia('(pointer: fine)').matches) {
 }
 
 /* ─── MARQUEE ─── */
-const marqueeItems = ['New Arrivals', 'Pre-Order Available', 'Luxury Curated', 'Delivered to Libya', 'Master Quality', 'Cyrène™ · The Refined Elite'];
+const marqueeItems = ['New Arrivals', 'Pre-Order Available', 'Luxury Curated', 'Delivered to Libya', 'Master Quality', 'Lunère™ · The Refined Elite'];
 const mi = document.getElementById('marquee-inner');
 const full = [...marqueeItems, ...marqueeItems].map(t => `<span class="marquee-item">${t}</span>`).join('');
 mi.innerHTML = full + full;
@@ -1811,7 +2135,7 @@ function submitOrder() {
   const address = document.getElementById('co-address').value.trim();
   if (!name || !phone || !city || !address) { alert('Please fill in all required fields'); return; }
 
-  const orderId = 'CY-' + Date.now().toString().slice(-8);
+  const orderId = 'LU-' + Date.now().toString().slice(-8);
   const order = {
     id: orderId,
     date: new Date().toLocaleString('en-GB'),
@@ -1848,8 +2172,8 @@ function submitOrder() {
   const payLabel = _isUSD ? 'Cash USD' : 'Bank Transfer (LYD)';
   const totalStr = _isUSD ? `$${order.totalUSD||order.total}` : `LYD ${(order.totalLYD||order.total).toLocaleString()}`;
   const waMsg = currentLang === 'ar'
-    ? `مرحباً CYRÈNE Boutique 👋\n\nأنا ${name}، أريد التأكيد على طلبي:\n\n*رقم الطلب:* ${orderId}\n\n*الطلبات:*\n${itemsList}\n\n*المجموع:* ${totalStr}\n*الدفع:* ${payLabel}\n\nهل يمكنكم تأكيد الطلب؟ شكراً 🙏`
-    : `Hello CYRÈNE Boutique 👋\n\nI am ${name} and I would like to confirm my order:\n\n*Order Number:* ${orderId}\n\n*Items:*\n${itemsList}\n\n*Total:* ${totalStr}\n*Payment:* ${payLabel}\n\nCould you please confirm my order? Thank you 🙏`;
+    ? `مرحباً LUNÈRE Boutique 👋\n\nأنا ${name}، أريد التأكيد على طلبي:\n\n*رقم الطلب:* ${orderId}\n\n*الطلبات:*\n${itemsList}\n\n*المجموع:* ${totalStr}\n*الدفع:* ${payLabel}\n\nهل يمكنكم تأكيد الطلب؟ شكراً 🙏`
+    : `Hello LUNÈRE Boutique 👋\n\nI am ${name} and I would like to confirm my order:\n\n*Order Number:* ${orderId}\n\n*Items:*\n${itemsList}\n\n*Total:* ${totalStr}\n*Payment:* ${payLabel}\n\nCould you please confirm my order? Thank you 🙏`;
 
   // Fill receipt
   document.getElementById('success-order-id').textContent = 'ORDER #' + orderId;
@@ -1888,7 +2212,13 @@ function submitOrder() {
 }
 
 /* ─── ADMIN AUTH ─── */
-function showAdminLogin() { document.getElementById('admin-login-overlay').classList.add('show'); }
+function showAdminLogin() {
+  document.getElementById('admin-login-overlay').classList.add('show');
+  setTimeout(() => {
+    const inp = document.getElementById('al-pass');
+    if (inp) inp.focus();
+  }, 100);
+}
 function hideAdminLogin() { document.getElementById('admin-login-overlay').classList.remove('show'); document.getElementById('al-pass').value = ''; document.getElementById('al-err').style.display = 'none'; }
 function doAdminLogin() {
   if (document.getElementById('al-pass').value === ADMIN_PASS) {
@@ -1988,7 +2318,7 @@ function openOrderDetail(id) {
     <div class="od-row"><span class="od-key">Method</span><span class="od-val">Bank Transfer · LYD</span></div>
   `;
   document.getElementById('od-status').value = o.status;
-  const waMsg = `Hello ${o.customer.name}, this is Cyrene™ Boutique regarding your order ${o.id}.`;
+  const waMsg = `Hello ${o.customer.name}, this is Lunère™ Boutique regarding your order ${o.id}.`;
   document.getElementById('od-wa').onclick = () => window.open(`https://wa.me/${o.customer.phone.replace(/\D/g,'')}?text=${encodeURIComponent(waMsg)}`, '_blank');
   document.getElementById('od-modal').classList.add('open');
 }
@@ -2346,7 +2676,7 @@ const T = {
     heroCta2: 'WhatsApp Order',
     scrollTxt: 'Scroll',
     // Marquee
-    marqueeItems: ['New Arrivals','Pre-Order Available','Luxury Curated','Delivered to Libya','Master Quality','Cyrène™ · The Refined Elite'],
+    marqueeItems: ['New Arrivals','Pre-Order Available','Luxury Curated','Delivered to Libya','Master Quality','Lunère™ · The Refined Elite'],
     // Products section
     collectionEye: 'The Collection',
     collectionTitle: 'New Arrivals',
@@ -2363,7 +2693,7 @@ const T = {
     contactEye: 'Reach Us',
     contactTitle: 'Get in Touch',
     // Footer
-    footerTag: 'The Refined Elite · Cyrène™',
+    footerTag: 'The Refined Elite · Lunère™',
     footerInfo1: 'Al-Siyahiya, Tripoli, Libya — Est. 2025',
     // Cart
     cartTitle: 'Your Cart',
@@ -2421,7 +2751,7 @@ const T = {
     pol3Title: 'No cancellations after confirmation',
     pol3Desc: 'Once your order is confirmed and payment received, it cannot be cancelled. Please review carefully.',
     pol4Title: 'Premium packaging included',
-    pol4Desc: 'Every order arrives in luxury Cyrene™ packaging — gift box, tissue paper, scented sachet.',
+    pol4Desc: 'Every order arrives in luxury Lunère™ packaging — gift box, tissue paper, scented sachet.',
     agreeLabel: 'I have read and agree to the order policies above',
   },
   ar: {
@@ -2718,12 +3048,34 @@ function applyLang() {
 }
 
 /* ─── SECRET ADMIN SHORTCUT — press A + D simultaneously ─── */
+/* ── Desktop: A+D simultaneously ── */
+/* ── Desktop: A + D simultaneously ── */
 const _keys = new Set();
 document.addEventListener("keydown", e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   _keys.add(e.key.toLowerCase());
-  if (_keys.has("a") && _keys.has("d")) showAdminLogin();
+  if (_keys.has("a") && _keys.has("d")) { _keys.clear(); showAdminLogin(); }
 });
-document.addEventListener("keyup", e => _keys.delete(e.key.toLowerCase()));
+document.addEventListener("keyup", e => { _keys.delete(e.key.toLowerCase()); });
+
+/* ── URL hash shortcut: site.com/#admin ── */
+if (window.location.hash === '#admin') {
+  window.history.replaceState(null, '', window.location.pathname);
+  setTimeout(showAdminLogin, 500);
+}
+
+/* ── Mobile: tap logo 5 times quickly (within 3 seconds) ── */
+let _logoTaps = 0, _logoTimer = null;
+function handleLogoTap() {
+  _logoTaps++;
+  clearTimeout(_logoTimer);
+  if (_logoTaps >= 5) {
+    _logoTaps = 0;
+    showAdminLogin();
+    return;
+  }
+  _logoTimer = setTimeout(() => { _logoTaps = 0; }, 3000);
+}
 
 
 /* ─────────────────────────────────────
@@ -2774,7 +3126,7 @@ function generateInvoice(orderId) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>CYRÈNE™ — Invoice ${o.id}</title>
+<title>LUNÈRE™ — Invoice ${o.id}</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -2891,7 +3243,7 @@ td:nth-child(2),td:nth-child(3){text-align:center;}
 <div class="invoice">
   <div class="cb"></div><div class="cr"></div>
   <div class="inv-outer"></div>
-  <div class="wm">CYRÈNE</div>
+  <div class="wm">LUNÈRE</div>
 
   <!-- HEADER -->
   <div class="hdr">
@@ -2903,7 +3255,7 @@ td:nth-child(2),td:nth-child(3){text-align:center;}
           <circle cx="0" cy="0" r="0.7" fill="#C9B07A"/>
         </svg>
         <div>
-          <div class="brand-name">CYRÈNE<sup>™</sup></div>
+          <div class="brand-name">LUNÈRE<sup>™</sup></div>
           <div class="brand-tag">The Refined Elite</div>
         </div>
       </div>
@@ -2989,13 +3341,13 @@ td:nth-child(2),td:nth-child(3){text-align:center;}
   <!-- FOOTER -->
   <div class="ftr">
     <div class="ftr-rule"><div class="frl r"></div><div class="frd"></div><div class="frl"></div></div>
-    <div class="ty">Thank you for choosing <strong>CYRÈNE</strong>.</div>
+    <div class="ty">Thank you for choosing <strong>LUNÈRE</strong>.</div>
     <div class="ftr-sub">Every piece. Curated for you.</div>
     <div class="ftr-info">
       <span>Al-Siyahiya, Tripoli, Libya</span>
       <span>++86 197 3031 7977</span>
-      <span>Cyreneboutique.ly@gmail.com</span>
-      <span>@cyrene.boutique</span>
+      <span>Lunereboutique.ly@gmail.com</span>
+      <span>@lunere.boutique</span>
     </div>
   </div>
 
@@ -3164,7 +3516,7 @@ async function submitCustomOrder() {
   }
 
   const waMsg =
-`👋 Hello CYRÈNE Boutique,
+`👋 Hello LUNÈRE Boutique,
 
 My name is *${name}* and I have a custom order request:
 
@@ -3194,6 +3546,129 @@ Please let me know if you can help. Thank you! 🙏`;
   customImgFile = null;
 }
 
+
+/* ─── VIDEO MANAGEMENT ─── */
+// Videos stored as blob URLs (session only — large files can't go in localStorage)
+// For permanent video: admin uploads each session, or host on a CDN
+
+let heroVideoBlobUrl     = localStorage.getItem('lu_hero_vid_url')     || null;
+let showcaseVideoBlobUrl = localStorage.getItem('lu_showcase_vid_url') || null;
+
+function initVideos() {
+  // Restore from session if available
+  if (heroVideoBlobUrl)     applyHeroVideo(heroVideoBlobUrl);
+  if (showcaseVideoBlobUrl) applyShowcaseVideo(showcaseVideoBlobUrl);
+}
+
+function uploadHeroVideo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('hero-vid-progress').style.display = 'block';
+  document.getElementById('hero-vid-bar').style.width = '60%';
+  document.getElementById('hero-vid-status').textContent = 'Loading video...';
+
+  const url = URL.createObjectURL(file);
+  heroVideoBlobUrl = url;
+
+  // Get duration for display
+  const tempVid = document.createElement('video');
+  tempVid.onloadedmetadata = () => {
+    const mins = Math.floor(tempVid.duration / 60);
+    const secs = Math.round(tempVid.duration % 60);
+    const durStr = mins > 0 ? mins + 'm ' + secs + 's' : secs + 's';
+    document.getElementById('hero-vid-bar').style.width = '100%';
+    document.getElementById('hero-vid-status').textContent = 'Hero video ready · Duration: ' + durStr;
+    setTimeout(() => { document.getElementById('hero-vid-progress').style.display = 'none'; }, 2000);
+    document.getElementById('hero-vid-label').textContent = file.name + ' · ' + durStr;
+    applyHeroVideo(url);
+    // Show preview
+    const preview = document.getElementById('hero-vid-preview');
+    const player  = document.getElementById('hero-vid-preview-player');
+    player.src = url;
+    preview.style.display = 'block';
+  };
+  tempVid.src = url;
+  e.target.value = '';
+}
+
+function applyHeroVideo(url) {
+  const vid = document.getElementById('hero-video');
+  const overlay = document.getElementById('hero-video-overlay');
+  const bg = document.querySelector('.hero-bg');
+  if (!vid) return;
+  vid.src = url;
+  vid.load();
+  vid.style.display = 'block';
+  if (overlay) overlay.style.display = 'block';
+  if (bg) bg.style.opacity = '0';
+  vid.play().catch(() => {});
+}
+
+function removeHeroVideo() {
+  const vid = document.getElementById('hero-video');
+  const overlay = document.getElementById('hero-video-overlay');
+  const bg = document.querySelector('.hero-bg');
+  if (vid) { vid.src = ''; vid.style.display = 'none'; }
+  if (overlay) overlay.style.display = 'none';
+  if (bg) bg.style.opacity = '1';
+  document.getElementById('hero-vid-preview').style.display = 'none';
+  document.getElementById('hero-vid-label').textContent = 'Click to upload hero background video';
+  heroVideoBlobUrl = null;
+}
+
+function uploadShowcaseVideo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('showcase-vid-progress').style.display = 'block';
+  document.getElementById('showcase-vid-bar').style.width = '60%';
+  document.getElementById('showcase-vid-status').textContent = 'Loading video...';
+
+  const url = URL.createObjectURL(file);
+  showcaseVideoBlobUrl = url;
+
+  const tempVid = document.createElement('video');
+  tempVid.onloadedmetadata = () => {
+    const mins = Math.floor(tempVid.duration / 60);
+    const secs = Math.round(tempVid.duration % 60);
+    const durStr = mins > 0 ? mins + 'm ' + secs + 's' : secs + 's';
+    document.getElementById('showcase-vid-bar').style.width = '100%';
+    document.getElementById('showcase-vid-status').textContent = 'Showcase video ready · ' + durStr;
+    setTimeout(() => { document.getElementById('showcase-vid-progress').style.display = 'none'; }, 2000);
+    document.getElementById('showcase-vid-label').textContent = file.name + ' · ' + durStr;
+    applyShowcaseVideo(url);
+    // Show preview
+    const preview = document.getElementById('showcase-vid-preview');
+    const player  = document.getElementById('showcase-vid-preview-player');
+    player.src = url;
+    preview.style.display = 'block';
+  };
+  tempVid.src = url;
+  e.target.value = '';
+}
+
+function applyShowcaseVideo(url) {
+  const vid  = document.getElementById('showcase-video');
+  const sect = document.getElementById('video-section');
+  const placeholder = document.getElementById('video-placeholder');
+  if (!vid) return;
+  vid.src = url;
+  vid.load();
+  if (sect) sect.style.display = 'block';
+  if (placeholder) placeholder.style.display = 'none';
+}
+
+function removeShowcaseVideo() {
+  const vid  = document.getElementById('showcase-video');
+  const sect = document.getElementById('video-section');
+  const placeholder = document.getElementById('video-placeholder');
+  if (vid) vid.src = '';
+  if (sect) sect.style.display = 'none';
+  if (placeholder) placeholder.style.display = 'flex';
+  document.getElementById('showcase-vid-preview').style.display = 'none';
+  document.getElementById('showcase-vid-label').textContent = 'Click to upload showcase video';
+  showcaseVideoBlobUrl = null;
+}
+
 /* ─── SCROLL TO SECTION ─── */
 function scrollToSection(selector) {
   // If not on store page, go there first then scroll
@@ -3214,10 +3689,200 @@ function scrollToSection(selector) {
 /* ─── zoom (no-op for compatibility) ─── */
 function zoom() {}
 
+
+/* ─────────────────────────────────────────────
+   VIDEO SYSTEM
+───────────────────────────────────────────── */
+let videoURL = localStorage.getItem('lu_video') || null;
+let heroVideoURL = localStorage.getItem('lu_hero_video') || null;
+
+function initVideo() {
+  // Restore saved video
+  if (videoURL) {
+    loadVideoFromURL(videoURL);
+  } else {
+    // Show upload placeholder for admin, hide for customers
+    // Always show placeholder so admin can upload
+    showVideoPlaceholder();
+  }
+  if (heroVideoURL) {
+    loadHeroVideoFromURL(heroVideoURL);
+  }
+}
+
+function showVideoPlaceholder() {
+  document.getElementById('video-upload-placeholder').style.display = 'block';
+  document.getElementById('video-section').style.display = 'none';
+}
+
+function loadVideo(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  // Ask if also use as hero background
+  const useAsHero = confirm('Use this video as the hero background too?');
+  loadVideoFromURL(url, useAsHero);
+  // Save to localStorage (blob URL doesn't persist — user must reload)
+  // For persistence, store in IndexedDB
+  saveVideoToDB(file, useAsHero);
+}
+
+function loadVideoFromURL(url, useAsHero) {
+  const mainVid = document.getElementById('main-video');
+  const section = document.getElementById('video-section');
+  const placeholder = document.getElementById('video-upload-placeholder');
+
+  mainVid.src = url;
+  mainVid.load();
+  section.style.display = 'block';
+  if (placeholder) placeholder.style.display = 'none';
+
+  // Event listeners
+  mainVid.addEventListener('timeupdate', updateVideoProgress);
+  mainVid.addEventListener('loadedmetadata', () => {
+    updateVideoTime();
+  });
+  mainVid.addEventListener('play',  () => document.getElementById('vid-play-btn').textContent = '⏸');
+  mainVid.addEventListener('pause', () => document.getElementById('vid-play-btn').textContent = '▶');
+  mainVid.addEventListener('ended', () => document.getElementById('vid-play-btn').textContent = '▶');
+
+  if (useAsHero) {
+    loadHeroVideoFromURL(url);
+  }
+}
+
+function loadHeroVideoFromURL(url) {
+  const heroVid = document.getElementById('hero-video');
+  const overlay = document.getElementById('hero-video-overlay');
+  heroVid.src = url;
+  heroVid.style.display = 'block';
+  if (overlay) overlay.style.display = 'block';
+  heroVid.load();
+  heroVid.play().catch(() => {});
+  heroVid.addEventListener('canplay', () => {
+    heroVid.classList.add('loaded');
+  });
+}
+
+/* ── Video controls ── */
+function togglePlay() {
+  const v = document.getElementById('main-video');
+  if (!v.src) return;
+  v.paused ? v.play() : v.pause();
+}
+
+function toggleMute() {
+  const v = document.getElementById('main-video');
+  const btn = document.getElementById('vid-mute-btn');
+  v.muted = !v.muted;
+  btn.textContent = v.muted ? '🔇' : '🔊';
+}
+
+function toggleFullscreen() {
+  const wrap = document.getElementById('vid-player-wrap');
+  if (!document.fullscreenElement) {
+    wrap.requestFullscreen && wrap.requestFullscreen();
+  } else {
+    document.exitFullscreen && document.exitFullscreen();
+  }
+}
+
+function seekVideo(e) {
+  const v = document.getElementById('main-video');
+  if (!v.duration) return;
+  const bar = document.getElementById('vid-progress');
+  const rect = bar.getBoundingClientRect();
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  v.currentTime = ratio * v.duration;
+}
+
+function updateVideoProgress() {
+  const v = document.getElementById('main-video');
+  if (!v.duration) return;
+  const pct = (v.currentTime / v.duration) * 100;
+  document.getElementById('vid-progress-fill').style.width = pct + '%';
+  updateVideoTime();
+}
+
+function updateVideoTime() {
+  const v = document.getElementById('main-video');
+  const fmt = s => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  };
+  const el = document.getElementById('vid-time');
+  if (el && v.duration) {
+    el.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+  }
+}
+
+/* ── Save video to IndexedDB for persistence ── */
+async function saveVideoToDB(file, useAsHero) {
+  try {
+    const db = await openImgDB();
+    const tx = db.transaction('imgs', 'readwrite');
+    tx.objectStore('imgs').put({ id: 'lu_main_video', dataUrl: file });
+    if (useAsHero) tx.objectStore('imgs').put({ id: 'lu_hero_video', dataUrl: file });
+  } catch(e) {
+    console.log('Video saved as blob URL only (session)');
+  }
+}
+
+async function loadVideoFromDB() {
+  try {
+    const db = await openImgDB();
+    const mainResult = await new Promise(res => {
+      const req = db.transaction('imgs').objectStore('imgs').get('lu_main_video');
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => res(null);
+    });
+    if (mainResult && mainResult.dataUrl) {
+      const blob = mainResult.dataUrl instanceof File
+        ? mainResult.dataUrl
+        : new Blob([mainResult.dataUrl], { type: 'video/mp4' });
+      const url = URL.createObjectURL(blob);
+      const heroResult = await new Promise(res => {
+        const req2 = db.transaction('imgs').objectStore('imgs').get('lu_hero_video');
+        req2.onsuccess = () => res(req2.result);
+        req2.onerror = () => res(null);
+      });
+      loadVideoFromURL(url, !!heroResult);
+      if (heroResult && heroResult.dataUrl) {
+        const blob2 = heroResult.dataUrl instanceof File
+          ? heroResult.dataUrl
+          : new Blob([heroResult.dataUrl], { type: 'video/mp4' });
+        loadHeroVideoFromURL(URL.createObjectURL(blob2));
+      }
+      return true;
+    }
+  } catch(e) {
+    console.log('No saved video found');
+  }
+  return false;
+}
+
+/* ── Admin: video upload button in admin sidebar ── */
+function adminUploadVideo() {
+  document.getElementById('vid-file-input') && document.getElementById('vid-file-input').click();
+  if (!document.getElementById('vid-file-input')) {
+    // Create temp input
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'video/*';
+    inp.onchange = loadVideo;
+    inp.click();
+  }
+}
+
 /* ─── INIT ─── */
 renderProducts();
 updateCartUI();
 applyLang();
+initVideos();
+// Init video system
+loadVideoFromDB().then(found => {
+  if (!found) showVideoPlaceholder();
+});
 // Refresh cursor hover listeners after render
 setTimeout(() => {
   if (window.matchMedia("(pointer: fine)").matches) {
