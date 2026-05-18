@@ -35,7 +35,7 @@ body {
   background: var(--ivory);
   color: var(--text);
   overflow-x: hidden;
-  cursor: none;
+  cursor: pointer;
 }
 img { display: block; max-width: 100%; }
 button { cursor: pointer; }
@@ -371,6 +371,7 @@ body::before {
   padding: 15px; border-radius: var(--r); width: 100%;
   font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; letter-spacing: 2px;
   transition: all 0.35s ease; display: flex; align-items: center; justify-content: center; gap: 10px;
+  cursor: pointer !important; pointer-events: all !important;
 }
 .modal-add-btn:hover { background: var(--blood); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,15,15,0.3); }
 
@@ -437,7 +438,7 @@ body::before {
   width: 100%; background: var(--crimson); color: #fff; border: none;
   padding: 15px; border-radius: var(--r);
   font-family: 'Cormorant Garamond', serif; font-size: 18px; letter-spacing: 2px;
-  transition: all 0.35s ease;
+  transition: all 0.35s ease; cursor: pointer !important;
 }
 .checkout-btn:hover { background: var(--blood); transform: translateY(-1px); }
 
@@ -524,7 +525,7 @@ body::before {
   transition: all 0.35s ease; display: flex; align-items: center; justify-content: center; gap: 10px;
 }
 .submit-btn:hover { background: var(--blood); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(107,15,15,0.25); }
-.back-link { background: none; border: none; color: var(--muted); font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 2px; display: flex; align-items: center; gap: 6px; margin-bottom: 28px; transition: color 0.25s; }
+.back-link { background: none; border: none; color: var(--muted); font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 2px; display: flex; align-items: center; gap: 6px; margin-bottom: 28px; transition: color 0.25s; cursor: pointer !important; }
 .back-link:hover { color: var(--text); }
 
 /* ════════════════════════════════════════════════════════════
@@ -997,6 +998,10 @@ body::before {
           <input type="file" id="receipt-file" accept="image/*,.pdf" style="display:none"
             onchange="document.getElementById('receipt-filename').textContent=this.files[0]?.name||'JPG, PNG, PDF accepted'"/>
         </div>
+
+        
+          </div>
+        </div>
       </div>
 
 
@@ -1117,7 +1122,7 @@ body::before {
 <div class="modal-overlay" id="product-modal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-gallery" id="modal-gallery">
+    <div class="modal-gallery" id="modal-gallery" style="position:relative;"><div id="m-gallery" style="position:absolute;inset:0;"></div>
       <div class="modal-gallery-placeholder">🛍</div>
     </div>
     <div class="modal-body">
@@ -1384,7 +1389,7 @@ body::before {
             </div>
 
             <!-- Image previews -->
-            <div id="img-previews-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;min-height:0;"></div>
+            <div id="img-preview" style="display:none;"></div><div id="img-previews-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;min-height:0;"></div>
 
             <!-- Manual URL fallback -->
             <div style="font-family:Jost,sans-serif;font-size:10px;color:rgba(255,255,255,.18);margin-bottom:6px;text-align:center;">— or paste an image link directly —</div>
@@ -1523,7 +1528,7 @@ let cart = [];
 let currentProduct = null;
 let selectedSize = '';
 let selectedColor = '';
-let selectedPayment = 'bank';
+let selectedPayment = 'bank'; // Only bank transfer accepted
 let currentOrderId = null;
 let ordersFilter = 'all';
 
@@ -1573,8 +1578,14 @@ window.addEventListener('scroll', () => {
 
 /* ─── PRODUCTS ─── */
 function loadProductImages(prods) {
-  // Images are now permanent URLs — no IndexedDB lookup needed
-  prods.forEach(p => { p._imgSrc = p.img || ''; });
+  prods.forEach(p => {
+    // Use first image from imgs array if available, otherwise use img field
+    if (p.imgs && p.imgs.length > 0) {
+      p._imgSrc = p.imgs[0];
+    } else {
+      p._imgSrc = p.img || '';
+    }
+  });
   return prods;
 }
 
@@ -1583,8 +1594,13 @@ async function renderProducts() {
   const prods = loadProductImages(getProducts());
   grid.innerHTML = prods.map(p => `
     <div class="product-card" onclick="openProduct(${p.id})" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openProduct(${p.id})">
-      ${p._imgSrc ? `<img class="product-img-main" src="${p._imgSrc}" alt="${p.name}" onerror="this.style.display='none'"/>` : ''}
-      <div class="product-img-placeholder">
+      ${p._imgSrc
+        ? `<img class="product-img-main" src="${p._imgSrc}" alt="${p.name}"
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"
+             onload="this.nextElementSibling.style.display='none'"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>`
+        : ''}
+      <div class="product-img-placeholder" style="${p._imgSrc ? 'display:none;' : ''}">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.2;color:var(--muted);">
           <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
         </svg>
@@ -1612,7 +1628,15 @@ function openProduct(id) {
   document.getElementById('m-price').innerHTML = `<span style='font-size:28px'>LYD ${(p.priceLYD||p.price||0).toLocaleString()}</span><span class='currency' style='font-size:15px;color:var(--muted);margin-right:12px'> / $${p.priceUSD||''} USD</span>`;
   document.getElementById('m-desc').textContent = p.desc;
   // Build image gallery — use imgs array if available, fallback to single img
-  const allImgs = p._imgSrc ? [p._imgSrc] : (p.imgs && p.imgs.length > 0) ? p.imgs : [];
+  // Get all images — prefer imgs array, fallback to single img
+  let allImgs = [];
+  if (p.imgs && p.imgs.length > 0) {
+    allImgs = p.imgs;
+  } else if (p._imgSrc) {
+    allImgs = [p._imgSrc];
+  } else if (p.img) {
+    allImgs = [p.img];
+  }
   if (allImgs.length > 0) {
     let galleryActiveIdx = 0;
     const mainImgHtml = `<img id="gallery-main-img" class="modal-gallery-img" src="${allImgs[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none'"/>`;
@@ -1664,9 +1688,14 @@ function selectOpt(type, val, btn) {
   btn.classList.add('active');
 }
 function addToCart() {
-  if (!selectedSize) { alert('Please select a size'); return; }
-  if (!selectedColor) { alert('Please select a colour'); return; }
-  cart.push({ ...currentProduct, selectedSize, selectedColor, cartId: Date.now() });
+  // If product has no sizes/colors defined — add directly
+  const hasSizes  = currentProduct.sizes  && currentProduct.sizes.length  > 0;
+  const hasColors = currentProduct.colors && currentProduct.colors.length > 0;
+  if (hasSizes  && !selectedSize)  { alert(currentLang==='ar' ? 'يرجى اختيار المقاس' : 'Please select a size');   return; }
+  if (hasColors && !selectedColor) { alert(currentLang==='ar' ? 'يرجى اختيار اللون'  : 'Please select a colour'); return; }
+  const size  = selectedSize  || (currentProduct.sizes  && currentProduct.sizes[0])  || '—';
+  const color = selectedColor || (currentProduct.colors && currentProduct.colors[0]) || '—';
+  cart.push({ ...currentProduct, selectedSize: size, selectedColor: color, cartId: Date.now() });
   updateCartUI();
   closeModal();
   openCart();
@@ -1723,7 +1752,10 @@ function goToCheckoutSummary() {
 }
 
 function goToCheckout() {
-  if (cart.length === 0) { alert('Your cart is empty'); return; }
+  if (!cart || cart.length === 0) {
+    alert(currentLang==='ar' ? 'السلة فارغة' : 'Your cart is empty');
+    return;
+  }
   closeCart();
   // Populate summary
   const items = document.getElementById('co-summary-items');
@@ -1743,20 +1775,24 @@ function goToCheckout() {
   // Reset policies checkbox
   const cb = document.getElementById('agree-policies');
   if (cb) cb.checked = false;
+  // Reset payment to bank transfer default
+  selectedPayment = 'bank';
+  const bdEl = document.getElementById('bank-details');
+  const cdEl = document.getElementById('cash-details');
+  const rsEl = document.getElementById('receipt-section');
+  if (bdEl) bdEl.classList.add('show');
+  if (cdEl) cdEl.style.display = 'none';
+  if (rsEl) rsEl.style.display = 'block';
+  document.querySelectorAll('.pay-opt').forEach((p,i) => p.classList.toggle('selected', i===0));
   showPage('checkout-page');
 }
 
 /* ─── PAYMENT ─── */
 function selectPayment(type, el) {
-  selectedPayment = type;
+  // Only bank transfer accepted — always bank
+  selectedPayment = 'bank';
   updateCartUI();
   goToCheckoutSummary();
-  document.querySelectorAll('.pay-opt').forEach(p => p.classList.remove('selected'));
-  el.classList.add('selected');
-  const bd = document.getElementById('bank-details');
-  const rs = document.getElementById('receipt-section');
-  bd.classList.toggle('show', type === 'bank');
-  rs.style.display = type === 'bank' ? 'block' : 'none';
 }
 
 /* ─── SUBMIT ORDER ─── */
@@ -1799,7 +1835,7 @@ function submitOrder() {
     weekday:'long', year:'numeric', month:'long', day:'numeric'
   });
 
-  const _isUSD = selectedPayment === 'cash';
+  const _isUSD = false; // Only bank transfer accepted
   const itemsList = order.items.map(i => `• ${i.name} (${i.size} · ${i.color}) — ${_isUSD ? '$'+(i.priceUSD||0) : 'LYD '+(i.priceLYD||0).toLocaleString()}`).join('\n');
   const payLabel = _isUSD ? 'Cash USD' : 'Bank Transfer (LYD)';
   const totalStr = _isUSD ? `$${order.totalUSD||order.total}` : `LYD ${(order.totalLYD||order.total).toLocaleString()}`;
@@ -1867,7 +1903,7 @@ function buildTable(orders) {
     <tr>
       <td style="color:var(--gold);letter-spacing:1px;font-size:11px">${o.id}</td>
       <td>${o.customer.name}</td>
-      <td style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold)">${o.payment==='cash'?'$'+(o.totalUSD||o.total):'LYD '+(o.totalLYD||o.total).toLocaleString()}</td>
+      <td style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold)">LYD ${(o.totalLYD||o.total||0).toLocaleString()}</td>
       <td style="font-size:11px;color:rgba(255,255,255,.3)">${o.date}</td>
       <td style="font-size:11px;text-transform:capitalize">${o.payment}</td>
       <td>${statusBadge(o.status)}</td>
@@ -1910,9 +1946,9 @@ function openOrderDetail(id) {
       <span class="od-key">${i.name} · ${i.size} · ${i.color}</span>
       <span class="od-val" style="color:var(--gold)">${o.payment==='cash'?'$'+(i.priceUSD||0):'LYD '+(i.priceLYD||0).toLocaleString()}</span>
     </div>
-  `).join('') + `<div class="od-row" style="margin-top:8px"><span class="od-key" style="font-weight:700">Total</span><span class="od-val" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)">${o.payment==='cash'?'$'+(o.totalUSD||o.total):'LYD '+(o.totalLYD||o.total).toLocaleString()}</span></div>`;
+  `).join('') + `<div class="od-row" style="margin-top:8px"><span class="od-key" style="font-weight:700">Total</span><span class="od-val" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)">LYD ${(o.totalLYD||o.total||0).toLocaleString()}</span></div>`;
   document.getElementById('od-payment').innerHTML = `
-    <div class="od-row"><span class="od-key">Method</span><span class="od-val" style="text-transform:capitalize">${o.payment}</span></div>
+    <div class="od-row"><span class="od-key">Method</span><span class="od-val">Bank Transfer · LYD</span></div>
   `;
   document.getElementById('od-status').value = o.status;
   const waMsg = `Hello ${o.customer.name}, this is Cyrene™ Boutique regarding your order ${o.id}.`;
@@ -1938,7 +1974,7 @@ async function renderAdminProducts() {
     prods.map(p => `
       <div class="ad-prod-card">
         <div class="ad-prod-img" style="position:relative;">
-          ${p._imgSrc ? `<img src="${p._imgSrc}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"/>` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;opacity:0.2;">🛍</div>'}
+          ${p._imgSrc ? `<img src="${p._imgSrc}" alt="" style="width:100%;height:100%;object-fit:cover;" onload="this.style.display='block'" onerror="this.style.display='none'"/>` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;opacity:0.2;">🛍</div>'}
         </div>
         <div class="ad-prod-info">
           <div class="ad-prod-name">${p.name}</div>
@@ -2169,8 +2205,10 @@ function saveProduct() {
     sizes: document.getElementById('ap-sizes').value.split(',').map(s=>s.trim()).filter(Boolean),
     colors: document.getElementById('ap-colors').value.split(',').map(c=>c.trim()).filter(Boolean),
     avail: document.getElementById('ap-avail').value,
-    imgs: (window._apImgs || []).map(o => (typeof o === 'string') ? o : (o.key || '')),
-    img: (window._apImgs && window._apImgs.length > 0) ? ((typeof window._apImgs[0]==='string') ? window._apImgs[0] : (window._apImgs[0].key||'')) : document.getElementById('ap-img').value.trim(),
+    imgs: (window._apImgs || []).map(o => (typeof o === 'string') ? o : (o.key || o.dataUrl || '')).filter(Boolean),
+    img:  (window._apImgs && window._apImgs.length > 0)
+            ? ((typeof window._apImgs[0] === 'string') ? window._apImgs[0] : (window._apImgs[0].key || window._apImgs[0].dataUrl || ''))
+            : (document.getElementById('ap-img') ? document.getElementById('ap-img').value.trim() : ''),
   };
 
   let prods = getProducts();
@@ -2271,9 +2309,9 @@ const T = {
     notesPh: 'Any special requests...',
     step2Title: 'Payment Method',
     payBank: 'Bank Transfer',
-    payBankDesc: 'LYD · Recommended',
+    payBankDesc: 'LYD · Only accepted payment',
     payCash: 'Cash USD',
-    payCashDesc: 'Upon delivery',
+    payCashDesc: 'Pay when you receive your order',
     bankTitle: 'Bank',
     bankName: 'عبدالوهاب القيلاني',
     acctName: 'Account Name',
@@ -2282,6 +2320,8 @@ const T = {
     currency: 'Currency',
     currencyVal: 'LYD (Libyan Dinar)',
     uploadLbl: 'Upload payment receipt / screenshot',
+    cashTitle: 'Pay in Cash USD upon delivery',
+    cashDesc: 'No payment needed now. Our team will contact you to confirm your order and arrange delivery. You pay in US Dollars when your order arrives.',
     uploadSub: 'JPG, PNG, PDF accepted',
     summaryTitle: 'Order Summary',
     submitBtn: '✦ Confirm Order ✦',
@@ -2355,9 +2395,9 @@ const T = {
     notesPh: 'أي تفاصيل إضافية...',
     step2Title: 'طريقة الدفع',
     payBank: 'تحويل بنكي',
-    payBankDesc: 'دينار ليبي · مُوصى به',
+    payBankDesc: 'دينار ليبي · طريقة الدفع الوحيدة المتاحة',
     payCash: 'نقداً بالدولار',
-    payCashDesc: 'عند الاستلام',
+    payCashDesc: 'تدفع عند استلام طلبك',
     bankTitle: 'البنك',
     bankName: 'مصرف الجمهورية',
     acctName: 'اسم الحساب',
@@ -2366,6 +2406,8 @@ const T = {
     currency: 'العملة',
     currencyVal: 'دينار ليبي',
     uploadLbl: 'ارفع صورة إيصال التحويل',
+    cashTitle: 'الدفع نقداً بالدولار عند الاستلام',
+    cashDesc: 'لا حاجة للدفع الآن. سيتواصل معك فريقنا لتأكيد الطلب وترتيب التوصيل. تدفع بالدولار الأمريكي عند وصول طلبك.',
     uploadSub: 'JPG أو PNG أو PDF',
     summaryTitle: 'ملخص الطلب',
     submitBtn: '✦ تأكيد الطلب ✦',
@@ -2552,6 +2594,12 @@ function applyLang() {
   if (step1Title) step1Title.innerHTML = `<span class="fc-num">1</span> ${t.step1Title}`;
   const step2Titles = document.querySelectorAll('.form-card-title');
   if (step2Titles[1]) step2Titles[1].innerHTML = `<span class="fc-num">2</span> ${t.step2Title}`;
+
+  // Cash payment section
+  const cashTitleEl = document.getElementById('cash-title');
+  const cashDescEl  = document.getElementById('cash-desc');
+  if (cashTitleEl && t.cashTitle) cashTitleEl.textContent = t.cashTitle;
+  if (cashDescEl  && t.cashDesc)  cashDescEl.textContent  = t.cashDesc;
 
   // Policies
   const polTitle = document.getElementById('policies-title');
@@ -2894,10 +2942,22 @@ function scrollToSection(selector) {
   }
 }
 
+/* ─── zoom (no-op for compatibility) ─── */
+function zoom() {}
+
 /* ─── INIT ─── */
 renderProducts();
 updateCartUI();
 applyLang();
+// Refresh cursor hover listeners after render
+setTimeout(() => {
+  if (window.matchMedia("(pointer: fine)").matches) {
+    document.querySelectorAll("button, a, .product-card, [onclick]").forEach(el => {
+      el.addEventListener("mouseenter", () => document.body.classList.add("hovering"));
+      el.addEventListener("mouseleave", () => document.body.classList.remove("hovering"));
+    });
+  }
+}, 500);
 </script>
 </body>
 </html>
