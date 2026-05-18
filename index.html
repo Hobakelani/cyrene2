@@ -47,8 +47,8 @@ a { text-decoration: none; }
 .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(201,176,122,0.5); border-radius: 50%; transform: translate(-50%,-50%); transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease; }
 body.hovering .cursor-ring { width: 52px; height: 52px; border-color: var(--gold); }
 @media (pointer: fine) {
-  body { cursor: none !important; }
-  button, a, .product-card, [onclick], [role="button"] { cursor: none !important; }
+  body { cursor: pointer !important; }
+  button, a, .product-card, [onclick], [role="button"] { cursor: pointer !important; }
 }
 @media (pointer: coarse) {
   .cursor { display: none; }
@@ -1765,26 +1765,8 @@ function openCart() { document.getElementById('cart-drawer').classList.add('open
 function closeCart() { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-overlay').classList.remove('open'); }
 function resetCart() { cart = []; updateCartUI(); }
 
-function goToCheckoutSummary() {
-  // Refresh summary if checkout page is active
-  if (!document.getElementById('checkout-page').classList.contains('active')) return;
-  const _usd = false;
-  const items = document.getElementById('co-summary-items');
-  if (!items) return;
-  items.innerHTML = cart.map(i => `
-    <div class="sum-item">
-      <div class="sum-item-img">${'🛍'}</div>
-      <div class="sum-item-info">
-        <div class="sum-item-name">${i.name}</div>
-        <div class="sum-item-meta">${i.selectedSize} · ${i.selectedColor}</div>
-      </div>
-      <div class="sum-item-price">${_usd ? '$'+(i.priceUSD||'') : 'LYD '+(i.priceLYD||i.price||0).toLocaleString()}</div>
-    </div>
-  `).join('');
-  const total = cart.reduce((s,i) => s + (_usd ? (i.priceUSD||0) : (i.priceLYD||i.price||0)), 0);
-  const el = document.getElementById('co-summary-total');
-  if (el) el.textContent = _usd ? `$${total.toLocaleString()}` : `LYD ${total.toLocaleString()}`;
-}
+function goToCheckoutSummary() { /* summary removed */ }
+
 
 function goToCheckout() {
   if (!cart || cart.length === 0) {
@@ -1792,37 +1774,25 @@ function goToCheckout() {
     return;
   }
   closeCart();
-  // Populate summary
-  const items = document.getElementById('co-summary-items');
-  items.innerHTML = cart.map(i => `
-    <div class="sum-item">
-      <div class="sum-item-img">${i.img ? `<img src="${i.img}"/>` : '🛍'}</div>
-      <div class="sum-item-info">
-        <div class="sum-item-name">${i.name}</div>
-        <div class="sum-item-meta">${i.selectedSize} · ${i.selectedColor}</div>
-      </div>
-      <div class="sum-item-price">${'LYD '+(i.priceLYD||i.price||0).toLocaleString()}</div>
-    </div>
-  `).join('');
-  const _usd2 = false;
-  const total = cart.reduce((s,i) => s + (_usd2 ? (i.priceUSD||0) : (i.priceLYD||i.price||0)), 0);
-  document.getElementById('co-summary-total').textContent = _usd2 ? `$${total.toLocaleString()}` : `LYD ${total.toLocaleString()}`;
-  // Reset policies checkbox
-  const cb = document.getElementById('agree-policies');
-  if (cb) cb.checked = false;
-  // Reset payment to bank transfer default
+
+  // Reset form state
   selectedPayment = 'bank';
+  const cb   = document.getElementById('agree-policies');
   const bdEl = document.getElementById('bank-details');
   const cdEl = document.getElementById('cash-details');
   const rsEl = document.getElementById('receipt-section');
+  if (cb)   cb.checked = false;
   if (bdEl) bdEl.classList.add('show');
   if (cdEl) cdEl.style.display = 'none';
   if (rsEl) rsEl.style.display = 'block';
-  document.querySelectorAll('.pay-opt').forEach((p,i) => p.classList.toggle('selected', i===0));
+  document.querySelectorAll('.pay-opt').forEach((p, i) => {
+    p.classList.toggle('selected', i === 0);
+  });
+
   showPage('checkout-page');
 }
 
-/* ─── PAYMENT ─── */
+
 function selectPayment(type, el) {
   selectedPayment = 'bank';
   updateCartUI();
