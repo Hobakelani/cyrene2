@@ -568,6 +568,13 @@ body::before {
 .channel-name { font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
 .channel-handle { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--crimson); }
 
+/* Full page takeover for non-store pages */
+#success-page { background: var(--noir); }
+#checkout-page { background: var(--ivory); }
+#custom-order-page { background: var(--ivory); }
+body.on-success-page > *:not(#success-page):not(script):not(style) { display: none !important; }
+body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: none !important; }
+
 /* ════════════════════════════════════════════════════════════
    FOOTER
 ════════════════════════════════════════════════════════════ */
@@ -577,7 +584,7 @@ body::before {
 .footer-wordmark { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; letter-spacing: 6px; color: #fff; }
 .footer-wordmark sup { font-size: 9px; color: var(--gold); }
 .footer-tagline { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: rgba(201,176,122,0.35); }
-.footer-info { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 200; color: rgba(255,255,255,0.18); text-align: right; line-height: 2.2; }
+.footer-info { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 200; color: rgba(255,255,255,0.45); text-align: right; line-height: 2.2; }
 
 /* ════════════════════════════════════════════════════════════
    ADMIN — LOGIN
@@ -902,10 +909,7 @@ body::before {
         <div>Al-Siyahiya, Tripoli, Libya — Est. 2025</div>
         <div>Cyreneboutique.ly@gmail.com</div>
         <div>@cyrene.boutique</div>
-        <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(201,176,122,0.1);display:flex;gap:16px;flex-wrap:wrap;">
-          <a href="legal.html"   style="color:rgba(201,176,122,0.3);font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(201,176,122,0.3)'">📜 Legal & Policies</a>
-          
-          </div>
+        
         <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(201,176,122,0.1);">
           <a href="legal.html" id="legal-link" style="color:rgba(201,176,122,0.35);text-decoration:none;font-family:Jost,sans-serif;font-size:10px;letter-spacing:2px;transition:color .3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(201,176,122,0.35)'">Legal &amp; Policies ↗</a>
         </div>
@@ -1090,10 +1094,9 @@ body::before {
      SUCCESS PAGE
 ════════════════════════════════════════════════════════════ -->
 <div class="page" id="success-page">
-  <div style="height:100vh;display:flex;align-items:center;justify-content:center;background:var(--noir);padding:40px;">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--noir);padding:40px 20px;overflow:hidden;">
     <div class="success-box">
       <div class="success-ornament">✦</div>
-      <h1 class="success-title">Order Placed</h1>
       <div class="success-id" id="success-order-id">ORDER #CY-000000</div>
       <p class="success-msg" id="success-body">
         Thank you for your order.<br>
@@ -1588,26 +1591,19 @@ mi.innerHTML = full + full;
 
 /* ─── PAGES ─── */
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
-  const el = document.getElementById(id);
-  if (id === 'admin-page') { el.style.display = 'flex'; el.classList.add('active'); }
-  else { el.style.display = 'block'; el.classList.add('active'); }
-  window.scrollTo(0,0);
-  // Nav color
-  const nav = document.getElementById('main-nav');
-  nav.classList.toggle('dark', id !== 'checkout-page');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) { target.classList.add('active'); window.scrollTo(0,0); }
+  // Hide/show nav and footer based on page
+  const nav    = document.getElementById('main-nav');
+  const footer = document.querySelector('footer');
+  const isStore = (id === 'store-page');
+  if (nav)    nav.style.display    = isStore ? '' : 'none';
+  if (footer) footer.style.display = isStore ? '' : 'none';
+  // Scroll to top always
+  document.documentElement.scrollTop = 0;
 }
 
-/* ─── NAV SCROLL ─── */
-window.addEventListener('scroll', () => {
-  const nav = document.getElementById('main-nav');
-  const isStore = document.getElementById('store-page').classList.contains('active');
-  if (isStore) {
-    nav.classList.toggle('dark', window.scrollY < window.innerHeight * 0.8);
-  }
-});
-
-/* ─── PRODUCTS ─── */
 function loadProductImages(prods) {
   prods.forEach(p => {
     // Use first image from imgs array if available, otherwise use img field
@@ -2137,8 +2133,30 @@ window._apImgs = window._apImgs || [];  // [{key: url, dataUrl: url}]
 
 /* ── Upload image to imgbb (free, no account needed) ──
    Returns a permanent public URL usable on any device/browser       */
+/* ── Resize only if image exceeds 2048px (preserves quality) ── */
+async function compressImage(file, maxW=2048, quality=0.97) {
+  return new Promise(res => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      // Keep highest quality — only drop if file is absurdly large (>32MB base64)
+      let dataUrl = canvas.toDataURL('image/jpeg', quality);
+      res(dataUrl);
+    };
+    img.src = url;
+  });
+}
+
+/* ── Upload full quality to imgbb ── */
 async function uploadToImgbb(file) {
-  const IMGBB_KEY = '5cd3d8ff0f0cb2b6f91b0dab0d12ddd6'; // free API key
+  const IMGBB_KEY = '5cd3d8ff0f0cb2b6f91b0dab0d12ddd6';
+  // Send original file directly — no compression
   const b64 = await new Promise((res, rej) => {
     const r = new FileReader();
     r.onload = e => res(e.target.result.split(',')[1]);
@@ -2148,10 +2166,13 @@ async function uploadToImgbb(file) {
   const fd = new FormData();
   fd.append('key', IMGBB_KEY);
   fd.append('image', b64);
-  const resp = await fetch('https://api.imgbb.com/1/upload', { method:'POST', body:fd });
+  const resp = await fetch('https://api.imgbb.com/1/upload', {
+    method: 'POST', body: fd
+  });
+  if (!resp.ok) throw new Error('Network error ' + resp.status);
   const data = await resp.json();
   if (data.success) return data.data.url;
-  throw new Error('Upload failed: ' + (data.error?.message || 'unknown'));
+  throw new Error(data.error?.message || 'imgbb rejected the file');
 }
 
 async function handleImageUpload(event) {
@@ -2159,48 +2180,61 @@ async function handleImageUpload(event) {
   if (!files.length) return;
   event.target.value = '';
 
-  // Show progress
-  const prog  = document.getElementById('upload-progress');
-  const bar   = document.getElementById('upload-progress-bar');
-  const txt   = document.getElementById('upload-progress-text');
-  const icon  = document.getElementById('upload-status-icon');
-  const lbl   = document.getElementById('img-upload-name');
+  const prog = document.getElementById('upload-progress');
+  const bar  = document.getElementById('upload-progress-bar');
+  const txt  = document.getElementById('upload-progress-text');
+  const icon = document.getElementById('upload-status-icon');
+  const lbl  = document.getElementById('img-upload-name');
 
   prog.style.display = 'block';
   icon.textContent = '⏳';
   lbl.textContent = 'Uploading ' + files.length + ' photo(s)...';
 
-  let done = 0;
-  const errors = [];
+  let done = 0, saved = 0, failed = 0;
 
   for (const file of files) {
-    try {
-      txt.textContent = `Uploading ${done + 1} of ${files.length}...`;
-      bar.style.width = Math.round((done / files.length) * 100) + '%';
+    txt.textContent = 'Uploading ' + (done+1) + ' of ' + files.length + '...';
+    bar.style.width = Math.round((done/files.length)*100) + '%';
 
+    // Try imgbb first
+    let uploaded = false;
+    try {
       const url = await uploadToImgbb(file);
       window._apImgs.push({ key: url, dataUrl: url });
-      done++;
-      bar.style.width = Math.round((done / files.length) * 100) + '%';
-      renderImgPreviews();
+      saved++; uploaded = true;
     } catch(e) {
-      errors.push(file.name);
-      done++;
+      // imgbb failed — fall back to compressed local base64
+      // This works on THIS device only, but better than nothing
+      try {
+        const compressed = await compressImage(file, 2048, 0.97);
+        window._apImgs.push({ key: compressed, dataUrl: compressed });
+        saved++; uploaded = true;
+        console.warn('imgbb failed, stored locally:', e.message);
+      } catch(e2) {
+        failed++;
+        console.error('Both upload methods failed:', e2);
+      }
     }
+    done++;
+    bar.style.width = Math.round((done/files.length)*100) + '%';
+    renderImgPreviews();
   }
 
   prog.style.display = 'none';
 
-  if (errors.length === 0) {
+  if (failed === 0) {
     icon.textContent = '✅';
-    lbl.textContent = files.length + ' photo(s) uploaded successfully';
+    lbl.textContent = saved + ' photo(s) ready';
     setTimeout(() => {
       icon.textContent = '📸';
       lbl.textContent = 'JPG or PNG · Multiple allowed';
-    }, 3000);
-  } else {
+    }, 2500);
+  } else if (saved > 0) {
     icon.textContent = '⚠️';
-    lbl.textContent = errors.length + ' photo(s) failed — try again or use a link';
+    lbl.textContent = saved + ' saved, ' + failed + ' failed — try a link for failed ones';
+  } else {
+    icon.textContent = '❌';
+    lbl.textContent = 'Upload failed — please paste an image link below';
   }
 }
 
@@ -2624,7 +2658,7 @@ function applyLang() {
 
   // Success page
   const sucTitle = document.querySelector('#success-page .success-title');
-  if (sucTitle) sucTitle.textContent = t.successTitle;
+  // success title removed from UI
   const waBtn = document.querySelector('.wa-btn');
   if (waBtn) waBtn.innerHTML = t.waBtn;
   const contBtn = document.querySelector('.continue-shopping');
