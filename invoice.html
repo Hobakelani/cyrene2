@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYRÈNE™ — Invoice</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --crimson:#6B0F0F;--blood:#8B1A1A;
+  --gold:#C9B07A;--gold2:#D4A843;
+  --noir:#080202;--ivory:#FDF6EC;
+  --cream:#F5EDE0;--parch:#EDE0CC;
+  --muted:#8A6A6A;--border:rgba(201,176,122,0.25);
+}
+html{font-size:16px;}
+body{
+  font-family:'Jost',sans-serif;
+  background:#E8E4DC;
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:40px 20px;
+  color:var(--noir);
+}
+
+/* ══════════════════════════════════════
+   TOOLBAR
+══════════════════════════════════════ */
+.toolbar{
+  width:100%;max-width:760px;
+  display:flex;gap:10px;justify-content:flex-end;
+  margin-bottom:20px;
+}
+.tb-btn{
+  font-family:'Jost',sans-serif;font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;padding:10px 22px;border-radius:2px;
+  cursor:pointer;transition:all .3s;border:none;
+}
+.tb-print{background:var(--crimson);color:#fff;}
+.tb-print:hover{background:var(--blood);}
+.tb-share{background:none;border:0.5px solid var(--border);color:var(--muted);}
+.tb-share:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ══════════════════════════════════════
+   INVOICE CARD
+══════════════════════════════════════ */
+.invoice{
+  width:100%;max-width:760px;
+  background:var(--ivory);
+  position:relative;
+  box-shadow:0 8px 60px rgba(0,0,0,0.18),0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* ── Corner ornaments ── */
+.invoice::before,.invoice::after,
+.corner-bl,.corner-br{
+  content:'';position:absolute;
+  width:28px;height:28px;
+  border-color:var(--gold);border-style:solid;
+  opacity:0.55;
+}
+.invoice::before{top:14px;left:14px;border-width:1px 0 0 1px;}
+.invoice::after{top:14px;right:14px;border-width:1px 1px 0 0;}
+.corner-bl{bottom:14px;left:14px;border-width:0 0 1px 1px;}
+.corner-br{bottom:14px;right:14px;border-width:0 1px 1px 0;}
+
+/* Outer gold border */
+.invoice-outer{
+  position:absolute;inset:8px;
+  border:0.5px solid rgba(201,176,122,0.18);
+  pointer-events:none;
+}
+
+/* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+.inv-header{
+  background:var(--noir);
+  padding:48px 56px 40px;
+  position:relative;overflow:hidden;
+}
+.inv-header::after{
+  content:'';position:absolute;
+  bottom:0;left:56px;right:56px;
+  height:0.5px;background:linear-gradient(to right,transparent,rgba(201,176,122,0.4),transparent);
+}
+/* Subtle red glow */
+.inv-header::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 50% 120%,rgba(107,15,15,0.18),transparent);
+  pointer-events:none;
+}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;}
+.brand-block{display:flex;align-items:center;gap:16px;}
+.brand-mark svg{display:block;}
+.brand-text{}
+.brand-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:300;letter-spacing:9px;color:#fff;
+  line-height:1;
+}
+.brand-name sup{font-size:11px;color:var(--gold);vertical-align:super;}
+.brand-tag{
+  font-family:'Cormorant Garamond',serif;
+  font-size:11px;font-style:italic;
+  color:rgba(201,176,122,0.45);letter-spacing:3px;margin-top:5px;
+}
+.inv-label-block{text-align:right;}
+.inv-label{
+  font-family:'Jost',sans-serif;font-size:9px;letter-spacing:5px;
+  color:rgba(201,176,122,0.45);text-transform:uppercase;margin-bottom:4px;
+}
+.inv-number{
+  font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;
+  color:var(--gold);letter-spacing:2px;
+}
+.inv-date{
+  font-family:'Jost',sans-serif;font-size:11px;font-weight:200;
+  color:rgba(255,255,255,0.3);letter-spacing:1px;margin-top:4px;
+}
+
+/* Header divider line */
+.header-rule{
+  display:flex;align-items:center;gap:14px;
+  margin:28px 0 0;position:relative;
+}
+.header-rule-line{flex:1;height:0.5px;background:linear-gradient(to right,transparent,rgba(201,176,122,0.3));}
+.header-rule-line.r{background:linear-gradient(to left,transparent,rgba(201,176,122,0.3));}
+.header-rule-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.6;flex-shrink:0;}
+
+/* ══════════════════════════════════════
+   CUSTOMER SECTION
+══════════════════════════════════════ */
+.inv-body{padding:0 56px;}
+
+.customer-section{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;
+  border-bottom:0.5px solid var(--border);
+}
+.customer-col{padding:28px 0;}
+.customer-col+.customer-col{padding-left:40px;border-left:0.5px solid var(--border);}
+.section-eyebrow{
+  font-family:'Jost',sans-serif;font-size:9px;letter-spacing:4px;
+  color:var(--gold2);text-transform:uppercase;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-eyebrow::after{
+  content:'';flex:1;height:0.5px;
+  background:linear-gradient(to right,rgba(201,176,122,0.3),transparent);
+}
+.cust-field{margin-bottom:10px;}
+.cust-label{
+  font-family:'Jost',sans-serif;font-size:9px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;margin-bottom:2px;
+}
+.cust-value{
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;
+  color:var(--noir);letter-spacing:0.5px;
+}
+.cust-value.editable{
+  border:none;outline:none;background:none;
+  font-family:'Cormorant Garamond',serif;font-size:17px;
+  color:var(--noir);width:100%;letter-spacing:0.5px;
+  border-bottom:0.5px dashed rgba(201,176,122,0.3);
+  padding-bottom:2px;cursor:text;
+}
+.cust-value.editable:focus{border-bottom-color:var(--gold2);}
+
+/* ══════════════════════════════════════
+   ITEMS TABLE
+══════════════════════════════════════ */
+.items-section{padding:28px 0;}
+.items-table{width:100%;border-collapse:collapse;}
+.items-table thead tr{border-bottom:0.5px solid var(--border);}
+.items-table th{
+  font-family:'Jost',sans-serif;font-size:9px;letter-spacing:3px;
+  color:var(--gold2);text-transform:uppercase;
+  padding:0 12px 12px 0;text-align:left;font-weight:400;
+}
+.items-table th:last-child{text-align:right;padding-right:0;}
+.items-table th:nth-child(2){text-align:center;}
+.items-table th:nth-child(3){text-align:center;}
+.items-table tbody tr{border-bottom:0.5px solid rgba(201,176,122,0.08);}
+.items-table tbody tr:hover td{background:rgba(201,176,122,0.03);}
+.items-table td{
+  font-family:'Jost',sans-serif;font-size:12px;font-weight:200;
+  color:var(--noir);padding:14px 12px 14px 0;vertical-align:top;
+}
+.items-table td:last-child{text-align:right;padding-right:0;}
+.items-table td:nth-child(2){text-align:center;}
+.items-table td:nth-child(3){text-align:center;}
+.item-name{
+  font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;
+  color:var(--noir);display:block;margin-bottom:3px;
+}
+.item-meta{
+  font-family:'Jost',sans-serif;font-size:10px;font-weight:200;
+  color:var(--muted);letter-spacing:1px;
+}
+.item-price{
+  font-family:'Cormorant Garamond',serif;font-size:17px;
+  color:var(--crimson);
+}
+
+/* Add item button */
+.add-item-row td{padding-top:10px;}
+.add-btn{
+  background:none;border:0.5px dashed rgba(201,176,122,0.3);
+  color:rgba(201,176,122,0.5);font-family:'Jost',sans-serif;
+  font-size:10px;letter-spacing:2px;padding:8px 16px;border-radius:2px;
+  cursor:pointer;transition:all .3s;
+}
+.add-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ══════════════════════════════════════
+   TOTALS
+══════════════════════════════════════ */
+.totals-section{
+  display:flex;justify-content:flex-end;
+  padding:0 0 28px;border-bottom:0.5px solid var(--border);
+}
+.totals-box{width:260px;}
+.totals-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:0.5px solid rgba(201,176,122,0.08);
+}
+.totals-row:last-child{border:none;}
+.totals-label{
+  font-family:'Jost',sans-serif;font-size:10px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;
+}
+.totals-value{
+  font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--noir);
+}
+.totals-row.grand{
+  margin-top:10px;padding-top:14px;
+  border-top:0.5px solid var(--gold)!important;
+  border-bottom:0.5px solid var(--gold)!important;
+}
+.totals-row.grand .totals-label{color:var(--noir);font-size:11px;font-weight:300;}
+.totals-row.grand .totals-value{
+  font-size:26px;color:var(--crimson);font-weight:400;
+}
+
+/* ══════════════════════════════════════
+   PAYMENT & NOTES
+══════════════════════════════════════ */
+.bottom-section{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;padding:28px 0;
+  border-bottom:0.5px solid var(--border);
+}
+.bottom-col{}
+.bottom-col+.bottom-col{padding-left:40px;border-left:0.5px solid var(--border);}
+.payment-method{
+  display:inline-flex;align-items:center;gap:8px;
+  border:0.5px solid var(--border);border-radius:2px;
+  padding:10px 16px;margin-top:10px;
+  font-family:'Cormorant Garamond',serif;font-size:15px;
+  color:var(--noir);
+}
+.payment-icon{font-size:16px;}
+.notes-field{
+  width:100%;min-height:60px;border:none;outline:none;
+  background:none;resize:none;
+  font-family:'Jost',sans-serif;font-size:12px;font-weight:200;
+  color:var(--noir);line-height:1.9;margin-top:10px;
+  border-bottom:0.5px dashed rgba(201,176,122,0.25);
+  padding-bottom:4px;
+}
+.notes-field::placeholder{color:rgba(138,106,106,0.4);}
+.notes-field:focus{border-bottom-color:var(--gold2);}
+
+/* Status badge */
+.status-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;margin-top:10px;
+  font-family:'Jost',sans-serif;font-size:10px;letter-spacing:2px;
+}
+.status-pending{background:rgba(107,15,15,0.08);color:var(--crimson);border:0.5px solid rgba(107,15,15,0.2);}
+.status-paid{background:rgba(92,173,107,0.1);color:#3A8A4A;border:0.5px solid rgba(92,173,107,0.3);}
+.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+.inv-footer{
+  background:var(--noir);
+  padding:36px 56px;
+  position:relative;overflow:hidden;
+  text-align:center;
+}
+.inv-footer::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 100% at 50% 0%,rgba(107,15,15,0.2),transparent);
+}
+.footer-rule{
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;position:relative;
+}
+.footer-rule-line{flex:1;height:0.5px;background:linear-gradient(to right,transparent,rgba(201,176,122,0.3));}
+.footer-rule-line.r{background:linear-gradient(to left,transparent,rgba(201,176,122,0.3));}
+.footer-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5;flex-shrink:0;}
+.thank-you{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;font-style:italic;
+  color:#fff;letter-spacing:3px;margin-bottom:8px;
+  position:relative;
+}
+.thank-you strong{
+  font-weight:400;font-style:normal;
+  background:linear-gradient(135deg,#f5e090,#d4a843,#f0dc80);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.footer-info{
+  font-family:'Jost',sans-serif;font-size:10px;font-weight:200;
+  color:rgba(255,255,255,0.22);letter-spacing:2px;
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-top:12px;position:relative;flex-wrap:wrap;
+}
+.footer-info span::before{content:'·';margin-right:16px;opacity:0.4;}
+.footer-info span:first-child::before{display:none;}
+
+/* ══════════════════════════════════════
+   WATERMARK
+══════════════════════════════════════ */
+.watermark{
+  position:absolute;
+  font-family:'Cormorant Garamond',serif;
+  font-size:180px;font-weight:300;letter-spacing:-5px;
+  color:rgba(201,176,122,0.04);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;pointer-events:none;user-select:none;
+  z-index:0;
+}
+
+/* ══════════════════════════════════════
+   PRINT STYLES
+══════════════════════════════════════ */
+@media print{
+  body{background:#fff;padding:0;}
+  .toolbar{display:none;}
+  .invoice{box-shadow:none;max-width:100%;}
+  .corner-bl,.corner-br{position:fixed;}
+  .add-btn{display:none;}
+  .notes-field{border:none;}
+  .cust-value.editable{border:none;}
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ══════════════════════════════════════
+   MOBILE
+══════════════════════════════════════ */
+@media(max-width:600px){
+  body{padding:16px 12px;}
+  .inv-header{padding:32px 24px 28px;}
+  .inv-body{padding:0 24px;}
+  .header-top{flex-direction:column;gap:20px;}
+  .inv-label-block{text-align:left;}
+  .customer-section,.bottom-section{grid-template-columns:1fr;}
+  .customer-col+.customer-col{padding-left:0;border-left:none;border-top:0.5px solid var(--border);padding-top:20px;margin-top:0;}
+  .bottom-col+.bottom-col{padding-left:0;border-left:none;border-top:0.5px solid var(--border);padding-top:20px;margin-top:0;}
+  .inv-footer{padding:28px 24px;}
+  .totals-section{padding-right:0;}
+  .totals-box{width:100%;}
+  .items-table th:nth-child(3),.items-table td:nth-child(3){display:none;}
+  .toolbar{justify-content:stretch;}
+  .tb-btn{flex:1;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="tb-btn tb-share" onclick="copyLink()">⬡ Share</button>
+  <button class="tb-btn tb-print" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<!-- INVOICE -->
+<div class="invoice" id="invoice">
+
+  <!-- Corner ornaments -->
+  <div class="corner-bl"></div>
+  <div class="corner-br"></div>
+  <div class="invoice-outer"></div>
+
+  <!-- Watermark -->
+  <div class="watermark">CYRÈNE</div>
+
+  <!-- ── HEADER ── -->
+  <div class="inv-header">
+    <div class="header-top">
+
+      <!-- Brand -->
+      <div class="brand-block">
+        <div class="brand-mark">
+          <svg width="44" height="44" viewBox="-14 -14 28 28">
+            <path d="M -12,-12 L 12,-12 L 12,12 L -12,12 L -12,-9.5 L 9.5,-9.5 L 9.5,9.5 L -9.5,9.5 L -9.5,-7 L 7,-7 L 7,7 L -7,7 L -7,-4 L 4,-4 L 4,4 L -4,4 L -4,-1.5 L 1.5,-1.5 L 1.5,1.5 L -1.5,1.5 L -1.5,-1.5"
+              fill="none" stroke="#C9B07A" stroke-width="1.4" stroke-linecap="square" stroke-linejoin="miter"/>
+            <circle cx="0" cy="0" r="0.7" fill="#C9B07A"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">CYRÈNE<sup>™</sup></div>
+          <div class="brand-tag">The Refined Elite</div>
+        </div>
+      </div>
+
+      <!-- Invoice number -->
+      <div class="inv-label-block">
+        <div class="inv-label">Invoice</div>
+        <div class="inv-number" id="inv-num">#CY-20250001</div>
+        <div class="inv-date" id="inv-date">May 18, 2025</div>
+      </div>
+
+    </div>
+
+    <div class="header-rule">
+      <div class="header-rule-line r"></div>
+      <div class="header-rule-diamond"></div>
+      <div class="header-rule-line"></div>
+    </div>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="inv-body">
+
+    <!-- Customer + Order Info -->
+    <div class="customer-section">
+      <div class="customer-col">
+        <div class="section-eyebrow">Customer</div>
+        <div class="cust-field">
+          <div class="cust-label">Full Name</div>
+          <input class="cust-value editable" type="text" value="Fatima Al-Mansoori" placeholder="Customer name"/>
+        </div>
+        <div class="cust-field">
+          <div class="cust-label">Phone / WhatsApp</div>
+          <input class="cust-value editable" type="text" value="+218 91 XXX XXXX" placeholder="Phone number"/>
+        </div>
+        <div class="cust-field">
+          <div class="cust-label">City</div>
+          <input class="cust-value editable" type="text" value="Tripoli" placeholder="City"/>
+        </div>
+      </div>
+
+      <div class="customer-col">
+        <div class="section-eyebrow">Order Info</div>
+        <div class="cust-field">
+          <div class="cust-label">Order Date</div>
+          <input class="cust-value editable" type="text" id="order-date" value="May 18, 2025" placeholder="Date"/>
+        </div>
+        <div class="cust-field">
+          <div class="cust-label">Expected Delivery</div>
+          <input class="cust-value editable" type="text" id="delivery-date" value="June 15, 2025" placeholder="Delivery date"/>
+        </div>
+        <div class="cust-field">
+          <div class="cust-label">Status</div>
+          <div>
+            <span class="status-badge status-pending" id="status-badge" onclick="toggleStatus(this)">
+              <span class="status-dot"></span>Pending
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="items-section">
+      <div class="section-eyebrow">Order Items</div>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width:45%">Item</th>
+            <th style="width:10%">Qty</th>
+            <th style="width:20%">Size / Colour</th>
+            <th style="width:25%">Price</th>
+          </tr>
+        </thead>
+        <tbody id="items-tbody">
+          <tr>
+            <td>
+              <span class="item-name" contenteditable="true">Italian Leather Tote</span>
+              <span class="item-meta" contenteditable="true">Bags · Black · Classic</span>
+            </td>
+            <td><span contenteditable="true">1</span></td>
+            <td><span contenteditable="true">M / Noir</span></td>
+            <td class="item-price">
+              <span contenteditable="true">LYD 1,800</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="item-name" contenteditable="true">Pointed-Toe Derby</span>
+              <span class="item-meta" contenteditable="true">Shoes · Calfskin</span>
+            </td>
+            <td><span contenteditable="true">1</span></td>
+            <td><span contenteditable="true">42 / Black</span></td>
+            <td class="item-price">
+              <span contenteditable="true">LYD 1,100</span>
+            </td>
+          </tr>
+        </tbody>
+        <tr class="add-item-row">
+          <td colspan="4">
+            <button class="add-btn" onclick="addItem()">+ Add Item</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Totals -->
+    <div class="totals-section">
+      <div class="totals-box">
+        <div class="totals-row">
+          <span class="totals-label">Subtotal</span>
+          <span class="totals-value" id="subtotal" contenteditable="true">LYD 2,900</span>
+        </div>
+        <div class="totals-row">
+          <span class="totals-label">Delivery</span>
+          <span class="totals-value" id="delivery-fee" contenteditable="true">Included</span>
+        </div>
+        <div class="totals-row grand">
+          <span class="totals-label">Total Amount</span>
+          <span class="totals-value" id="grand-total" contenteditable="true">LYD 2,900</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment & Notes -->
+    <div class="bottom-section">
+      <div class="bottom-col">
+        <div class="section-eyebrow">Payment</div>
+        <div>
+          <div class="cust-label">Method</div>
+          <div class="payment-method" id="payment-method" onclick="togglePayment(this)" style="cursor:pointer;" title="Click to change">
+            <span class="payment-icon">🏦</span>
+            <span id="pay-txt">Bank Transfer · LYD</span>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <div class="cust-label">Payment Status</div>
+          <div style="margin-top:6px;">
+            <span class="status-badge status-pending" id="pay-status-badge" onclick="togglePayStatus(this)" style="cursor:pointer;">
+              <span class="status-dot"></span><span id="pay-status-txt">Awaiting Payment</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-col">
+        <div class="section-eyebrow">Notes</div>
+        <textarea class="notes-field" placeholder="Any special instructions, gift wrapping requests, or notes for this order..."></textarea>
+      </div>
+    </div>
+
+  </div><!-- /inv-body -->
+
+  <!-- ── FOOTER ── -->
+  <div class="inv-footer">
+    <div class="footer-rule">
+      <div class="footer-rule-line r"></div>
+      <div class="footer-diamond"></div>
+      <div class="footer-rule-line"></div>
+    </div>
+    <div class="thank-you">
+      Thank you for choosing <strong>CYRÈNE</strong>.
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:rgba(201,176,122,0.35);letter-spacing:3px;margin-top:4px;position:relative;">
+      Every piece. Curated for you.
+    </div>
+    <div class="footer-info">
+      <span>Al-Siyahiya, Tripoli, Libya</span>
+      <span>++86 197 3031 7977</span>
+      <span>Cyreneboutique.ly@gmail.com</span>
+      <span>@cyrene.boutique</span>
+    </div>
+  </div>
+
+</div><!-- /invoice -->
+
+<script>
+/* ── Auto date ── */
+const now = new Date();
+const opts = { year:'numeric', month:'long', day:'numeric' };
+document.getElementById('order-date').value = now.toLocaleDateString('en-GB', opts);
+document.getElementById('inv-date').textContent = now.toLocaleDateString('en-GB', opts);
+
+// Delivery = 4 weeks
+const del = new Date(now); del.setDate(del.getDate() + 28);
+document.getElementById('delivery-date').value = del.toLocaleDateString('en-GB', opts);
+
+// Invoice number
+const invNum = 'CY-' + now.getFullYear().toString().slice(2) + String(now.getMonth()+1).padStart(2,'0') + String(Math.floor(Math.random()*9000)+1000);
+document.getElementById('inv-num').textContent = '#' + invNum;
+
+/* ── Status toggles ── */
+function toggleStatus(el) {
+  const isPending = el.classList.contains('status-pending');
+  el.classList.toggle('status-pending', !isPending);
+  el.classList.toggle('status-paid', isPending);
+  el.querySelector('.status-dot + *') ? null : null;
+  el.innerHTML = isPending
+    ? '<span class="status-dot"></span>Confirmed'
+    : '<span class="status-dot"></span>Pending';
+}
+
+const payStates = [
+  { cls:'status-pending', txt:'Awaiting Payment' },
+  { cls:'status-paid',    txt:'Payment Received' },
+];
+let payStateIdx = 0;
+function togglePayStatus(el) {
+  payStateIdx = (payStateIdx + 1) % payStates.length;
+  const s = payStates[payStateIdx];
+  el.className = 'status-badge ' + s.cls;
+  document.getElementById('pay-status-txt').textContent = s.txt;
+}
+
+/* ── Payment method toggle ── */
+const payMethods = [
+  { icon:'🏦', txt:'Bank Transfer · LYD' },
+  { icon:'💵', txt:'Cash USD' },
+  { icon:'💬', txt:'WhatsApp Confirmed' },
+];
+let payIdx = 0;
+function togglePayment(el) {
+  payIdx = (payIdx + 1) % payMethods.length;
+  const m = payMethods[payIdx];
+  el.querySelector('.payment-icon').textContent = m.icon;
+  document.getElementById('pay-txt').textContent = m.txt;
+}
+
+/* ── Add item ── */
+function addItem() {
+  const tbody = document.getElementById('items-tbody');
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>
+      <span class="item-name" contenteditable="true">Product Name</span>
+      <span class="item-meta" contenteditable="true">Category · Details</span>
+    </td>
+    <td><span contenteditable="true">1</span></td>
+    <td><span contenteditable="true">Size / Colour</span></td>
+    <td class="item-price" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
+      <span contenteditable="true">LYD 0</span>
+      <button onclick="this.closest('tr').remove()" style="background:none;border:none;color:rgba(107,15,15,0.4);cursor:pointer;font-size:14px;padding:0;line-height:1;flex-shrink:0;" title="Remove">✕</button>
+    </td>`;
+  tbody.appendChild(row);
+  // Focus the name
+  row.querySelector('.item-name').focus();
+}
+
+/* ── Copy link ── */
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => alert('Link copied!'))
+    .catch(() => alert('Use Ctrl+C to copy the URL'));
+}
+</script>
+
+<div style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(8,2,2,0.96);border-top:0.5px solid rgba(201,176,122,0.15);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);">
+  <a href="index.html"   style="flex:1;text-align:center;padding:13px 6px;font-family:'Jost',sans-serif;font-size:9px;letter-spacing:2px;color:rgba(201,176,122,0.5);text-decoration:none;transition:color .25s;border-right:0.5px solid rgba(201,176,122,0.1);" onmouseover="this.style.color='#D4A843'" onmouseout="this.style.color='rgba(201,176,122,0.5)'">🛍 STORE</a>
+  <a href="invoice.html" style="flex:1;text-align:center;padding:13px 6px;font-family:'Jost',sans-serif;font-size:9px;letter-spacing:2px;color:rgba(201,176,122,0.5);text-decoration:none;transition:color .25s;border-right:0.5px solid rgba(201,176,122,0.1);" onmouseover="this.style.color='#D4A843'" onmouseout="this.style.color='rgba(201,176,122,0.5)'">🧾 INVOICE</a>
+  <a href="legal.html"   style="flex:1;text-align:center;padding:13px 6px;font-family:'Jost',sans-serif;font-size:9px;letter-spacing:2px;color:rgba(201,176,122,0.5);text-decoration:none;transition:color .25s;" onmouseover="this.style.color='#D4A843'" onmouseout="this.style.color='rgba(201,176,122,0.5)'">📜 LEGAL</a>
+</div>
+<div style="height:50px;"></div>
+</body>
+</html>
