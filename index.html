@@ -933,7 +933,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
   <ul class="nav-links">
     <li><a href="#" onclick="scrollToSection('.marquee-strip');return false;">New Collection</a></li>
     <li><a href="#" onclick="scrollToSection('.products-section');return false;">Shop</a></li>
-    <li><a href="#" onclick="scrollToSection('.how-section');return false;">How to Order</a></li>
+    
     <li><a href="#" onclick="scrollToSection('.contact-section');return false;">Contact</a></li>
   </ul>
   <div class="nav-actions">
@@ -968,7 +968,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
     <div class="hero-mark">
       <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="18" fill="#C9B07A"/><circle cx="27" cy="14" r="14" fill="#080202"/></svg>
     </div>
-    <h1 class="hero-title">CYR<span class="gold-char">È</span>NE<sup style="font-size:0.22em;vertical-align:super;color:var(--gold);letter-spacing:0;">™</sup></h1>
+    <h1 class="hero-title">LUN<span class="gold-char">É</span>RE<sup style="font-size:0.22em;vertical-align:super;color:var(--gold);letter-spacing:0;">™</sup></h1>
     <p class="hero-subtitle">Boutique</p>
     <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(13px,1.4vw,18px);font-style:italic;font-weight:300;color:rgba(255,255,255,0.35);letter-spacing:4px;margin-top:6px;animation:fadeUp 1s ease 0.35s both;">The Refined Elite</p>
     <div class="hero-divider">
@@ -993,69 +993,17 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
     </div>
   </section>
   <!-- ══
-  <!-- ════════════ VIDEO SHOWCASE SECTION ════════════ -->
-  <section id="video-section" style="display:none;background:#000;position:relative;">
-    <video id="showcase-video"
-      style="width:100%;display:block;max-height:90vh;object-fit:cover;"
-      controls playsinline preload="metadata">
-    </video>
-    <!-- Luxury overlay when no video -->
-    <div id="video-placeholder" style="
-      width:100%;height:60vh;
-      background:linear-gradient(135deg,#080202 0%,#1A0808 50%,#080202 100%);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="18" fill="#C9B07A"/><circle cx="27" cy="14" r="14" fill="#080202"/></svg>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.2);letter-spacing:6px;">LUNÉRE™</div>
-      <div style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.12);text-transform:uppercase;">Video Collection</div>
-    </div>
-  </section>
-  <!-- ═══════════════════════════════════════════════ -->
+  
 
 ═════════════════════════════════════════
        VIDEO SECTION
   ═══════════════════════════════════════════ -->
-  <section class="video-section" id="video-section" style="display:none;">
-    <div class="video-section-inner">
-      <div class="video-section-label">LUNÉRE™ BOUTIQUE</div>
-      <h2 class="video-section-title" id="vid-section-title">The LUNÉRE Experience</h2>
-      <!-- Video player -->
-      <div class="video-player-wrap" id="vid-player-wrap">
-        <video id="main-video" playsinline
-          style="width:100%;display:block;max-height:80vh;object-fit:contain;background:#000;">
-        </video>
-        <!-- Custom controls -->
-        <div class="vid-controls" id="vid-controls">
-          <button class="vid-play-btn" id="vid-play-btn" onclick="togglePlay()">▶</button>
-          <div class="vid-progress" id="vid-progress" onclick="seekVideo(event)">
-            <div class="vid-progress-fill" id="vid-progress-fill"></div>
-          </div>
-          <span class="vid-time" id="vid-time">0:00 / 0:00</span>
-          <button class="vid-mute-btn" onclick="toggleMute()" id="vid-mute-btn">🔊</button>
-          <button class="vid-fs-btn" onclick="toggleFullscreen()">⛶</button>
-        </div>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- ═══════════════════════════════════════════
        VIDEO UPLOAD PLACEHOLDER (shows when no video)
   ═══════════════════════════════════════════ -->
-  <section class="video-section" id="video-upload-placeholder" style="display:none;">
-    <div class="video-section-inner">
-      <div class="video-section-label">BRAND VIDEO</div>
-      <h2 class="video-section-title">The LUNÉRE Experience</h2>
-      <div class="video-upload-zone" onclick="document.getElementById('vid-file-input').click()">
-        <div class="video-upload-icon">🎬</div>
-        <div class="video-upload-title">Add Your Brand Video</div>
-        <div class="video-upload-sub">
-          Upload from your device · MP4, MOV, WebM supported<br>
-          Full length · Full quality · No compression
-        </div>
-      </div>
-      <input type="file" id="vid-file-input" accept="video/*" style="display:none"
-        onchange="loadVideo(event)"/>
-    </div>
-  </section>
+  
 
 
   <!-- MARQUEE -->
@@ -1074,35 +1022,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
   </section>
 
   <!-- HOW TO ORDER -->
-  <section class="how-section section">
-    <div class="section-header fade-up">
-      <span class="section-eyebrow" style="color:rgba(201,176,122,0.5)">The Process</span>
-      <h2 class="section-title light">How to Order</h2>
-      <div class="section-rule"></div>
-    </div>
-    <div class="steps-row fade-up">
-      <div class="step">
-        <div class="step-num">I</div>
-        <div class="step-title">Browse</div>
-        <div class="step-desc">Explore our curated collection. Each piece selected for refined taste.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">II</div>
-        <div class="step-title">Select</div>
-        <div class="step-desc">Choose your size, colour, and add to cart. Pre-order available.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">III</div>
-        <div class="step-title">Pay</div>
-        <div class="step-desc">Bank transfer or cash USD. Upload your receipt securely.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">IV</div>
-        <div class="step-title">Receive</div>
-        <div class="step-desc">3–4 weeks delivery. Beautifully packaged. Scented. Unforgettable.</div>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- CONTACT -->
   <section class="contact-section section fade-up">
@@ -1421,7 +1341,7 @@ body.on-checkout-page > *:not(#checkout-page):not(script):not(style) { display: 
     <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="18" fill="#C9B07A"/><circle cx="27" cy="14" r="14" fill="#080202"/></svg>
     <div class="al-title">Admin Access</div>
     <div class="al-sub">LUNÉRE™ · The Refined Elite</div>
-    <input type="password" class="al-input" id="al-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+    <input type="password" class="al-input" id="al-pass" placeholder="Password" onkeydown="event.preventDefault();if(event.key==='Enter')doAdminLogin()"/>
     <button class="al-btn" onclick="doAdminLogin()">ENTER</button>
     <div class="al-err" id="al-err">Incorrect password</div>
     <br>
@@ -2195,12 +2115,23 @@ function showAdminLogin() {
 }
 function hideAdminLogin() { document.getElementById('admin-login-overlay').classList.remove('show'); document.getElementById('al-pass').value = ''; document.getElementById('al-err').style.display = 'none'; }
 function doAdminLogin() {
-  if (document.getElementById('al-pass').value === ADMIN_PASS) {
+  const pass = document.getElementById('al-pass').value;
+  if (pass === ADMIN_PASS) {
     hideAdminLogin();
-    showPage('admin-page');
+    // Directly show admin page without going through showPage
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('admin-page').classList.add('active');
+    // Keep nav and footer hidden for admin
+    const nav = document.getElementById('main-nav');
+    const footer = document.querySelector('footer');
+    if (nav) nav.style.display = 'none';
+    if (footer) footer.style.display = 'none';
+    window.scrollTo(0,0);
     renderDash();
   } else {
     document.getElementById('al-err').style.display = 'block';
+    document.getElementById('al-pass').value = '';
+    document.getElementById('al-pass').focus();
   }
 }
 function exitAdmin() { showPage('store-page'); }
